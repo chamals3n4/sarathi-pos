@@ -1,6 +1,7 @@
+import { useState, useEffect } from "react";
+import supabase from "@/supabaseClient";
 import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,26 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-const frameworks = [
-  {
-    value: "pens",
-    label: "Pens",
-  },
-  {
-    value: "pencils",
-    label: "Pencils",
-  },
-  {
-    value: "books",
-    label: "Books",
-  },
-  {
-    value: "bicycles",
-    label: "Bicycles",
-  },
-];
-
-export default function Switch() {
+export default function Switch({ categories, onCategorySelect }) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
@@ -50,33 +32,36 @@ export default function Switch() {
           className="w-[200px] justify-between"
         >
           {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : "Select Category..."}
+            ? categories.find((category) => category.id === value)?.name
+            : "Select category..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." />
+          <CommandInput placeholder="Search category..." />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>No category found.</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {categories.map((category) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value}
+                  key={category.id}
+                  value={category.id}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
+                    onCategorySelect(
+                      currentValue === value ? "" : currentValue
+                    );
                   }}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === framework.value ? "opacity-100" : "opacity-0"
+                      value === category.id ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {framework.label}
+                  {category.name}
                 </CommandItem>
               ))}
             </CommandGroup>

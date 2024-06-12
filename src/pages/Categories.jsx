@@ -27,6 +27,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Switch from "@/components/Swith";
+import Spinner from "@/components/Spinner";
 
 import Items from "./Items";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,8 @@ export default function Categories() {
   const [categories, setCategories] = useState([]);
 
   const [categoryName, setCategoryName] = useState("");
+
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
@@ -52,6 +55,8 @@ export default function Categories() {
         }
       } catch (error) {
         console.error("Error fetching data:", error.message);
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -121,31 +126,35 @@ export default function Categories() {
             </DialogContent>
           </Dialog>
         </div>
-        <Table>
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[200px]">ID</TableHead>
-              <TableHead>Category Name</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {categories.length > 0 ? (
-              categories.map((category) => (
-                <TableRow key={category.id}>
-                  <TableCell className="font-medium">{category.id}</TableCell>
-                  <TableCell>{category.name}</TableCell>
-                </TableRow>
-              ))
-            ) : (
+        {loading ? (
+          <Spinner loading={loading} />
+        ) : (
+          <Table>
+            {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={4} className="text-center">
-                  No data available
-                </TableCell>
+                <TableHead className="w-[200px] text-lg">ID</TableHead>
+                <TableHead className="text-lg">Category Name</TableHead>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {categories.length > 0 ? (
+                categories.map((category) => (
+                  <TableRow key={category.id}>
+                    <TableCell className="text-lg">{category.id}</TableCell>
+                    <TableCell className="text-lg">{category.name}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center">
+                    No data available
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </>
   );

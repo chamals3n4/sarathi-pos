@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import supabase from "@/supabaseClient";
 import { TableDemo } from "@/components/Table";
-
 import {
   Dialog,
   DialogClose,
@@ -12,7 +11,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
 import {
   Table,
   TableBody,
@@ -23,33 +21,34 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Switch from "@/components/Swith";
 
 import Items from "./Items";
 import { Button } from "@/components/ui/button";
-
 import { useNavigate } from "react-router-dom";
-import { PersonStanding } from "lucide-react";
+
+import Spinner from "@/components/Spinner";
 
 export default function Customers() {
   const [items, setItems] = useState([]);
-
-  const [categories, setCategories] = useState("");
+  const [categories, setCategories] = useState([]);
   const [itemName, setItemName] = useState("");
   const [itemPrice, setItemPrice] = useState("");
   const [itemQty, setItemQty] = useState("");
-  const [categoryId, setCategoryId] = useState("");
 
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchItems() {
       try {
-        const { data, error } = await supabase.from("items").select("*");
-
+        const { data, error } = await supabase
+          .from("items")
+          .select("*,categories(name)")
+          .order("id", { ascending: true });
         if (error) {
           console.error("Error fetching data:", error.message);
         } else {
@@ -57,13 +56,14 @@ export default function Customers() {
         }
       } catch (error) {
         console.error("Error fetching data:", error.message);
+      } finally {
+        setLoading(false);
       }
     }
 
     async function fetchCategories() {
       try {
         const { data, error } = await supabase.from("categories").select("*");
-
         if (error) {
           console.error("Error fetching data:", error.message);
         } else {
@@ -71,6 +71,8 @@ export default function Customers() {
         }
       } catch (error) {
         console.error("Error fetching data:", error.message);
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -85,7 +87,7 @@ export default function Customers() {
       name: itemName,
       price: parseFloat(itemPrice),
       qty: itemQty,
-      category_id: categoryId,
+      category_id: selectedCategoryId,
     };
 
     try {
@@ -154,17 +156,27 @@ export default function Customers() {
                       className="col-span-3"
                     />
                   </div>
-
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="qty" className="text-right">
+                    <Label htmlFor="category" className="text-right">
                       Category
                     </Label>
-                    <Switch />
+                    <div className="col-span-3">
+                      <select
+                        id="category"
+                        value={selectedCategoryId}
+                        onChange={(e) => setSelectedCategoryId(e.target.value)}
+                      >
+                        <option value="">Select a category</option>
+                        {categories.map((category) => (
+                          <option key={category.id} value={category.id}>
+                            {category.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 </div>
                 <DialogFooter>
-                  {/* <Button type="submit">Save changes</Button> */}
-
                   <DialogClose asChild>
                     <Button type="submit">Save Changes</Button>
                   </DialogClose>
@@ -173,37 +185,46 @@ export default function Customers() {
             </DialogContent>
           </Dialog>
         </div>
-        <Table>
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead>Item Category</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.length > 0 ? (
-              items.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.id}</TableCell>
-                  <TableCell>{item.name}</TableCell>
-                  <TableCell>{item.price}</TableCell>
-                  <TableCell>{item.qty}</TableCell>
-                  <TableCell>{item.category_id}</TableCell>
-                </TableRow>
-              ))
-            ) : (
+        {loading ? (
+          <Spinner loading={loading} />
+        ) : (
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={4} className="text-center">
-                  No data available
-                </TableCell>
+                <TableHead className="w-[100px] text-lg font-medium">
+                  ID
+                </TableHead>
+                <TableHead className="text-lg font-medium">Name</TableHead>
+                <TableHead className="text-lg font-medium">Price</TableHead>
+                <TableHead className="text-lg font-medium">Quantity</TableHead>
+                <TableHead className="text-lg font-medium">
+                  Item Category
+                </TableHead>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {items.length > 0 ? (
+                items.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell className="text-lg">{item.id}</TableCell>
+                    <TableCell className="text-lg">{item.name}</TableCell>
+                    <TableCell className="text-lg">{item.price}</TableCell>
+                    <TableCell className="text-lg">{item.qty}</TableCell>
+                    <TableCell className="text-lg">
+                      {item.categories.name}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center">
+                    No data available
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </>
   );

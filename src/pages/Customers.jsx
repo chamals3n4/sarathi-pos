@@ -27,6 +27,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Switch from "@/components/Swith";
+import Spinner from "@/components/Spinner";
 
 import Items from "./Items";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,8 @@ export default function Customers() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
@@ -55,6 +58,8 @@ export default function Customers() {
         }
       } catch (error) {
         console.error("Error fetching data:", error.message);
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -149,37 +154,43 @@ export default function Customers() {
             </DialogContent>
           </Dialog>
         </div>
-        <Table>
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead className="text-right">Address</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {applicants.length > 0 ? (
-              applicants.map((applicant) => (
-                <TableRow key={applicant.id}>
-                  <TableCell className="font-medium">{applicant.id}</TableCell>
-                  <TableCell>{applicant.name}</TableCell>
-                  <TableCell>{applicant.phone}</TableCell>
-                  <TableCell className="text-right">
-                    {applicant.address}
+        {loading ? (
+          <Spinner loading={loading} />
+        ) : (
+          <Table>
+            {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px] text-lg font-medium">
+                  ID
+                </TableHead>
+                <TableHead className="text-lg font-medium">Name</TableHead>
+                <TableHead className="text-lg font-medium">Phone</TableHead>
+                <TableHead className="text-lg font-medium">Address</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {applicants.length > 0 ? (
+                applicants.map((applicant) => (
+                  <TableRow key={applicant.id}>
+                    <TableCell className="text-lg">{applicant.id}</TableCell>
+                    <TableCell className="text-lg">{applicant.name}</TableCell>
+                    <TableCell className="text-lg">{applicant.phone}</TableCell>
+                    <TableCell className="text-lg">
+                      {applicant.address}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center">
+                    No data available
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center">
-                  No data available
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </>
   );
