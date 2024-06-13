@@ -8,6 +8,7 @@ import Sales from "./pages/Sales";
 import Invoice from "./pages/Invoice";
 import NotFoundPage from "./pages/NotFoundPage";
 import NavMenu from "./components/NavMenu";
+import ViewAllInvoice from "./pages/ViewAllInvoice";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="/categories" element={<Categories />} />
           <Route path="/sales" element={<Sales />} />
           <Route path="/invoice" element={<Invoice />} />
+          <Route path="/view-invoices" element={<ViewAllInvoice />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
