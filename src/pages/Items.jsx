@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 import Spinner from "@/components/Spinner";
+import NavMenuForRoutes from "@/components/NavMenuForRoutes";
 
 export default function Customers() {
   const [items, setItems] = useState([]);
@@ -109,6 +110,9 @@ export default function Customers() {
   return (
     <>
       <div className="overflow-hidden bg-white py-24 pr-36 pl-36 mb-10 sm:py-16">
+        <div className="pb-5 pl-1">
+          <NavMenuForRoutes />
+        </div>
         <div className="right-20 pb-6">
           <div className="pb-10">
             <h1 className="text-2xl font-bold">Items Management</h1>

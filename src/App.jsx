@@ -9,6 +9,7 @@ import Invoice from "./pages/Invoice";
 import NotFoundPage from "./pages/NotFoundPage";
 import NavMenu from "./components/NavMenu";
 import ViewAllInvoice from "./pages/ViewAllInvoice";
+import SingleGeneratedInvoice from "./pages/SingleGeneratedInvoice";
 
 export default function App() {
   return (
@@ -22,6 +23,10 @@ export default function App() {
           <Route path="/sales" element={<Sales />} />
           <Route path="/invoice" element={<Invoice />} />
           <Route path="/view-invoices" element={<ViewAllInvoice />} />
+          <Route
+            path="/view-invoices/:id"
+            element={<SingleGeneratedInvoice />}
+          />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

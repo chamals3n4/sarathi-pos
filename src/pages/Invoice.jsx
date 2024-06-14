@@ -150,7 +150,8 @@ export default function Customers() {
           invoiceDataInserted,
           invoiceItemsDataInserted
         );
-        navigate("/view-invoices");
+
+        navigate(`/view-invoices/${invoiceId}`);
       }
     } catch (error) {
       console.error("Error inserting data", error.message);
