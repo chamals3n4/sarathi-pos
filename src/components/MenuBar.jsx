@@ -14,6 +14,9 @@ export default function MenuBar() {
         <nav className="z-10">
           <ul className="flex flex-row items-center px-6 py-3 mb-12 text-indigo-100 bg-sarath-orange rounded-lg">
             <li className="pr-8">
+              <Link to="/">Home Page</Link>
+            </li>
+            <li className="pr-8">
               <Link to="/customers">Customers</Link>
             </li>
             <li className="pr-8">
