@@ -15,6 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import NavMenuForRoutes from "@/components/NavMenuForRoutes";
+import MenuBar from "@/components/MenuBar";
 
 export default function InvoicePDF() {
   const [invoice, setInvoice] = useState(null); // Set initial state to null
@@ -74,9 +75,7 @@ export default function InvoicePDF() {
 
   return (
     <div className="pt-16 pr-24 pl-24 pb-24">
-      <div className="pb-5 pl-4">
-        <NavMenuForRoutes />
-      </div>
+      <MenuBar />
 
       <div className="mx-auto max-w-2xl pb-10 pl-4 lg:mx-0">
         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">

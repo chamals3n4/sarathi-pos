@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import supabase from "@/supabaseClient";
 import { TableDemo } from "@/components/Table";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import {
   Dialog,
@@ -33,6 +35,8 @@ import Items from "./Items";
 import { Button } from "@/components/ui/button";
 
 import { useNavigate } from "react-router-dom";
+import { Layers } from "lucide-react";
+import MenuBar from "@/components/MenuBar";
 
 export default function Categories() {
   const [categories, setCategories] = useState([]);
@@ -79,23 +83,31 @@ export default function Categories() {
         console.log("Error inserting data", error.message);
       } else {
         console.log("Data inserted successfully", data);
+        toast.success("Category Created Successfully");
       }
     } catch (error) {
       console.log("Error inserting data", error.message);
     }
-    return navigate("/categories");
+    navigate("/categories");
   };
 
   return (
     <>
+      <ToastContainer />
       <div className="overflow-hidden bg-white py-24 pr-36 pl-36 mb-10 sm:py-16">
+        <MenuBar />
         <div className="right-20 pb-6">
-          <div className="pb-10">
-            <h1 className="text-2xl font-bold">Category Management</h1>
+          <div className="pb-10 flex items-center space-x-4">
+            <div className="text-white text-2xl w-[50px] h-[50px] bg-sarath-orange rounded-[10px] flex items-center justify-center">
+              <Layers className="w-[25px] h-[25px]" />
+            </div>
+            <h1 className="text-3xl text-sarathi-text font-bold">
+              Manage Categories
+            </h1>
           </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button>Add New Category</Button>
+              <Button className="bg-sarath-orange">Add New Category</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>

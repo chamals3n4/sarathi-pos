@@ -30,6 +30,11 @@ import { useNavigate } from "react-router-dom";
 
 import Spinner from "@/components/Spinner";
 import NavMenuForRoutes from "@/components/NavMenuForRoutes";
+import { ListChecks } from "lucide-react";
+
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import MenuBar from "@/components/MenuBar";
 
 export default function Customers() {
   const [items, setItems] = useState([]);
@@ -100,6 +105,7 @@ export default function Customers() {
         console.log("Error inserting data", error.message);
       } else {
         console.log("Data inserted successfully", data);
+        toast.success("Item Created Successfully");
       }
     } catch (error) {
       console.log("Error inserting data", error.message);
@@ -109,17 +115,21 @@ export default function Customers() {
 
   return (
     <>
+      <ToastContainer />
       <div className="overflow-hidden bg-white py-24 pr-36 pl-36 mb-10 sm:py-16">
-        <div className="pb-5 pl-1">
-          <NavMenuForRoutes />
-        </div>
+        <MenuBar />
         <div className="right-20 pb-6">
-          <div className="pb-10">
-            <h1 className="text-2xl font-bold">Items Management</h1>
+          <div className="pb-10 flex items-center space-x-4">
+            <div className="text-white text-2xl w-[50px] h-[50px] bg-sarath-orange rounded-[10px] flex items-center justify-center">
+              <ListChecks className="w-[25px] h-[25px]" />
+            </div>
+            <h1 className="text-3xl text-sarathi-text font-bold">
+              Manage Items
+            </h1>
           </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button>Add New Item</Button>
+              <Button className="bg-sarath-orange">Add New Item</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
@@ -169,6 +179,7 @@ export default function Customers() {
                         id="category"
                         value={selectedCategoryId}
                         onChange={(e) => setSelectedCategoryId(e.target.value)}
+                        className="col-span-12 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
                       >
                         <option value="">Select a category</option>
                         {categories.map((category) => (

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import supabase from "@/supabaseClient";
 import { TableDemo } from "@/components/Table";
+import NavMenuForRoutes from "@/components/NavMenuForRoutes";
 
 import {
   Dialog,
@@ -33,7 +34,11 @@ import Items from "./Items";
 import { Button } from "@/components/ui/button";
 
 import { useNavigate } from "react-router-dom";
-import { PersonStanding } from "lucide-react";
+import { Layers, PersonStanding } from "lucide-react";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import MenuBar from "@/components/MenuBar";
 
 export default function Customers() {
   const [applicants, setApplicants] = useState([]);
@@ -84,6 +89,7 @@ export default function Customers() {
         console.log("Error inserting data", error.message);
       } else {
         console.log("Data inserted successfully", data);
+        toast.success("Customer created successfully!"); // Trigger toast notification
       }
     } catch (error) {
       console.log("Error inserting data", error.message);
@@ -93,14 +99,22 @@ export default function Customers() {
 
   return (
     <>
+      <ToastContainer />
       <div className="overflow-hidden bg-white py-24 pr-36 pl-36 mb-10 sm:py-16">
+        <MenuBar />
+
         <div className="right-20 pb-6">
-          <div className="pb-10">
-            <h1 className="text-2xl font-bold">Customer Management</h1>
+          <div className="pb-10 flex items-center space-x-4">
+            <div className="text-white text-2xl w-[50px] h-[50px] bg-sarath-orange rounded-[10px] flex items-center justify-center">
+              <Layers className="w-[25px] h-[25px]" />
+            </div>
+            <h1 className="text-3xl text-sarathi-text font-bold">
+              Customer Management
+            </h1>
           </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button>Add New Customer</Button>
+              <Button className="bg-sarath-orange">Add New Customer</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>

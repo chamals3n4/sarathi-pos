@@ -21,8 +21,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
-import Spinner from "@/components/Spinner";
+import { toast, ToastContainer } from "react-toastify";
 import { Label } from "@radix-ui/react-label";
+import { FilePlus } from "lucide-react";
+import MenuBar from "@/components/MenuBar";
 
 export default function Customers() {
   const [items, setItems] = useState([]);
@@ -151,7 +153,11 @@ export default function Customers() {
           invoiceItemsDataInserted
         );
 
-        navigate(`/view-invoices/${invoiceId}`);
+        toast.success("Invoice Created Successfully");
+
+        setTimeout(() => {
+          navigate(`/view-invoices/${invoiceId}`);
+        }, 1000);
       }
     } catch (error) {
       console.error("Error inserting data", error.message);
@@ -200,14 +206,21 @@ export default function Customers() {
 
   return (
     <>
+      <ToastContainer />
       <div className="overflow-hidden bg-white py-24 pr-36 pl-36 mb-10 sm:py-16">
+        <MenuBar />
         <div className="right-20 pb-6">
-          <div className="pb-10">
-            <h1 className="text-2xl font-bold">Create Invoice</h1>
+          <div className="pb-10 flex items-center space-x-4">
+            <div className="text-white text-2xl w-[50px] h-[50px] bg-sarath-orange rounded-[10px] flex items-center justify-center">
+              <FilePlus className="w-[25px] h-[25px]" />
+            </div>
+            <h1 className="text-3xl text-sarathi-text font-bold">
+              Create Invoice
+            </h1>
           </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button>Create New Invoice</Button>
+              <Button className="bg-sarath-orange">Create New Invoice</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[1000px] max-h-[80vh] overflow-auto">
               <DialogHeader>
@@ -222,7 +235,7 @@ export default function Customers() {
                     id="customer"
                     value={selectedCustomerId}
                     onChange={(e) => setSelectedCustomerId(e.target.value)}
-                    className="col-span-12 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                    className="col-span-12 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
                   >
                     <option value="">Select Customer</option>
                     {customers.map((customer) => (
@@ -282,7 +295,7 @@ export default function Customers() {
                       name="id"
                       value={item.id}
                       onChange={(e) => handleInputChange(index, e)}
-                      className="col-span-3 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                      className="col-span-3 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
                     >
                       <option value="">Select Item</option>
                       {items.map((item) => (

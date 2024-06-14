@@ -53,7 +53,7 @@ export default function NavMenuForRoutes() {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-red-500 text-white font-bold">
+          <NavigationMenuTrigger className="bg-sarath-orange text-white font-bold">
             Select Menu
           </NavigationMenuTrigger>
           <NavigationMenuContent>

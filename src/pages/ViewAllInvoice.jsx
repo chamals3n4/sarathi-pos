@@ -11,6 +11,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Spinner from "@/components/Spinner";
+import { GalleryHorizontalEnd } from "lucide-react";
+import MenuBar from "@/components/MenuBar";
 
 export default function ViewAllInvoice() {
   const [invoices, setInvoices] = useState([]);
@@ -39,8 +41,14 @@ export default function ViewAllInvoice() {
   return (
     <>
       <div className="overflow-hidden bg-white py-24 pr-36 pl-36 mb-10 sm:py-16">
-        <div className="pb-10">
-          <h1 className="text-2xl font-bold">Manage All Invoices</h1>
+        <MenuBar />
+        <div className="pb-10 flex items-center space-x-4">
+          <div className="text-white text-2xl w-[50px] h-[50px] bg-sarath-orange rounded-[10px] flex items-center justify-center">
+            <GalleryHorizontalEnd className="w-[25px] h-[25px]" />
+          </div>
+          <h1 className="text-3xl text-sarathi-text font-bold">
+            View All Invoices
+          </h1>
         </div>
         {loading ? (
           <Spinner loading={loading} />
