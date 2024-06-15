@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import supabase from "@/supabaseClient";
-import { TableDemo } from "@/components/Table";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 import {
   Dialog,
@@ -14,7 +13,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
 import {
   Table,
   TableBody,
@@ -25,25 +23,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Switch from "@/components/Swith";
+import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 
-import Items from "./Items";
-import { Button } from "@/components/ui/button";
-
-import { useNavigate } from "react-router-dom";
 import { Layers } from "lucide-react";
+
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import MenuBar from "@/components/MenuBar";
-import { ToastDescription } from "@radix-ui/react-toast";
 
 export default function Categories() {
   const [categories, setCategories] = useState([]);
-
   const [categoryName, setCategoryName] = useState("");
-
   const [currentCategory, setCurrentCategory] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -69,6 +63,7 @@ export default function Categories() {
     fetchCategories();
   }, []);
 
+  // Create new category
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -93,6 +88,7 @@ export default function Categories() {
     navigate("/categories");
   };
 
+  // Update Category
   const handleUpdate = async (e) => {
     e.preventDefault();
     const updatedCategory = {
@@ -126,7 +122,7 @@ export default function Categories() {
         <MenuBar />
         <div className="right-20 pb-6">
           <div className="pb-10 flex items-center space-x-4">
-            <div className="text-white text-2xl w-[50px] h-[50px] bg-sarath-orange rounded-[10px] flex items-center justify-center">
+            <div className="text-white text-2xl w-[50px] h-[50px] bg-choreo-blue rounded-[10px] flex items-center justify-center">
               <Layers className="w-[25px] h-[25px]" />
             </div>
             <h1 className="text-3xl text-sarathi-text font-bold">
@@ -135,7 +131,7 @@ export default function Categories() {
           </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="bg-sarath-orange">Add New Category</Button>
+              <Button className="bg-choreo-blue">Add New Category</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
@@ -156,8 +152,6 @@ export default function Categories() {
                   </div>
                 </div>
                 <DialogFooter>
-                  {/* <Button type="submit">Save changes</Button> */}
-
                   <DialogClose asChild>
                     <Button type="submit">Save Changes</Button>
                   </DialogClose>
@@ -170,7 +164,6 @@ export default function Categories() {
           <Spinner loading={loading} />
         ) : (
           <Table>
-            {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[200px] text-lg">ID</TableHead>
@@ -187,7 +180,7 @@ export default function Categories() {
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
-                            className="bg-sarath-orange"
+                            className="bg-update-green h-8"
                             onClick={() => {
                               setCurrentCategory(category);
                               setCategoryName(category.name);
@@ -217,8 +210,6 @@ export default function Categories() {
                               </div>
                             </div>
                             <DialogFooter>
-                              {/* <Button type="submit">Save changes</Button> */}
-
                               <DialogClose asChild>
                                 <Button type="submit">Save Changes</Button>
                               </DialogClose>

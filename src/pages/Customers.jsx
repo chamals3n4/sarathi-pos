@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import supabase from "@/supabaseClient";
-import { TableDemo } from "@/components/Table";
-import NavMenuForRoutes from "@/components/NavMenuForRoutes";
 
 import {
   Dialog,
@@ -13,7 +11,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
 import {
   Table,
   TableBody,
@@ -24,30 +21,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Spinner from "@/components/Spinner";
-
-import Items from "./Items";
 import { Button } from "@/components/ui/button";
 
+import Spinner from "@/components/Spinner";
+
 import { useNavigate } from "react-router-dom";
-import { Layers, PersonStanding } from "lucide-react";
+import { Layers } from "lucide-react";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 import MenuBar from "@/components/MenuBar";
 
 export default function Customers() {
   const [applicants, setApplicants] = useState([]);
-
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-
   const [loading, setLoading] = useState(true);
-
   const [currentCustomer, setCurrentCustomer] = useState(null);
 
   const navigate = useNavigate();
@@ -72,6 +65,7 @@ export default function Customers() {
     fetchApplicants();
   }, []);
 
+  // Create new customer
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -98,6 +92,40 @@ export default function Customers() {
     return navigate("/customers");
   };
 
+  // Update Customer
+  // const handleUpdate = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!currentCustomer) {
+  //     console.error("No customer selected for update");
+  //     return;
+  //   }
+
+  //   const updatedCustomer = {
+  //     name: name,
+  //     phone: phone,
+  //     address: address,
+  //   };
+
+  //   try {
+  //     const { data, error } = await supabase
+  //       .from("customers")
+  //       .update(updatedCustomer)
+  //       .eq("id", currentCustomer.id)
+  //       .select();
+  //     if (error) {
+  //       console.log("Error updating data", error.message);
+  //       toast.error("Error Updating Customer");
+  //     } else {
+  //       console.log("Data updated successfully", data);
+  //       toast.success("Customer Updated Successfully");
+  //     }
+  //   } catch (error) {
+  //     console.log("Error updating data", error.message);
+  //     toast.error("Error Updating Customer");
+  //   }
+  // };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
 
@@ -106,28 +134,35 @@ export default function Customers() {
       return;
     }
 
-    const updatedCustomer = {
-      name: name,
-      phone: phone,
-      address: address,
-    };
+    const updatedApplicants = [...applicants]; // Create a copy of the applicants array
 
-    try {
-      const { data, error } = await supabase
-        .from("customers")
-        .update(updatedCustomer)
-        .eq("id", currentCustomer.id)
-        .select();
-      if (error) {
-        console.log("Error updating data", error.message);
-        toast.error("Error Updating Customer");
-      } else {
-        console.log("Data updated successfully");
-        toast.success("Customer Updated Successfully");
+    const customerIndex = applicants.findIndex(
+      (applicant) => applicant.id === currentCustomer.id
+    );
+
+    if (customerIndex !== -1) {
+      updatedApplicants[customerIndex] = {
+        ...currentCustomer, // Spread the current customer data
+        name: name,
+        phone: phone,
+        address: address,
+      };
+
+      try {
+        // Update logic with supabase using updatedApplicants
+        const { data, error } = await supabase
+          .from("customers")
+          .update(updatedApplicants[customerIndex]) // Update the specific object
+          .eq("id", currentCustomer.id)
+          .select();
+        // ... rest of the update logic
+      } catch (error) {
+        // ... handle errors
+      } finally {
+        setApplicants(updatedApplicants); // Set the state with the updated array
       }
-    } catch (error) {
-      console.log("Error updating data", error.message);
-      toast.error("Error Updating Customer");
+    } else {
+      console.error("Customer not found in the list");
     }
   };
 
@@ -139,7 +174,7 @@ export default function Customers() {
 
         <div className="right-20 pb-6">
           <div className="pb-10 flex items-center space-x-4">
-            <div className="text-white text-2xl w-[50px] h-[50px] bg-sarath-orange rounded-[10px] flex items-center justify-center">
+            <div className="text-white text-2xl w-[50px] h-[50px] bg-choreo-blue rounded-[10px] flex items-center justify-center">
               <Layers className="w-[25px] h-[25px]" />
             </div>
             <h1 className="text-3xl text-sarathi-text font-bold">
@@ -148,7 +183,7 @@ export default function Customers() {
           </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="bg-sarath-orange">Add New Customer</Button>
+              <Button className="bg-choreo-blue">Add New Customer</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
@@ -192,8 +227,6 @@ export default function Customers() {
                   </div>
                 </div>
                 <DialogFooter>
-                  {/* <Button type="submit">Save changes</Button> */}
-
                   <DialogClose asChild>
                     <Button type="submit">Save Changes</Button>
                   </DialogClose>
@@ -206,7 +239,6 @@ export default function Customers() {
           <Spinner loading={loading} />
         ) : (
           <Table>
-            {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[100px] text-lg font-medium">
@@ -231,13 +263,13 @@ export default function Customers() {
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
-                            className="bg-sarath-orange"
+                            className="bg-update-green h-8"
                             onClick={() => {
                               setCurrentCustomer(applicant);
                               setName(applicant.name);
                               setPhone(applicant.phone);
                               setAddress(applicant.address);
-                              console.log(applicant); // Debugging: log the selected applicant
+                              console.log(applicant);
                             }}
                           >
                             Update Customer
@@ -286,7 +318,12 @@ export default function Customers() {
                             </div>
                             <DialogFooter>
                               <DialogClose asChild>
-                                <Button type="submit">Save Changes</Button>
+                                <Button
+                                  type="submit"
+                                  className="bg-update-green"
+                                >
+                                  Save Changes
+                                </Button>
                               </DialogClose>
                             </DialogFooter>
                           </form>

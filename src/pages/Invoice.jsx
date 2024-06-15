@@ -26,7 +26,7 @@ import { Label } from "@radix-ui/react-label";
 import { FilePlus } from "lucide-react";
 import MenuBar from "@/components/MenuBar";
 
-export default function Customers() {
+export default function CreateInvoice() {
   const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [customers, setCustomers] = useState([]);
@@ -211,7 +211,7 @@ export default function Customers() {
         <MenuBar />
         <div className="right-20 pb-6">
           <div className="pb-10 flex items-center space-x-4">
-            <div className="text-white text-2xl w-[50px] h-[50px] bg-sarath-orange rounded-[10px] flex items-center justify-center">
+            <div className="text-white text-2xl w-[50px] h-[50px] bg-choreo-blue rounded-[10px] flex items-center justify-center">
               <FilePlus className="w-[25px] h-[25px]" />
             </div>
             <h1 className="text-3xl text-sarathi-text font-bold">
@@ -220,7 +220,7 @@ export default function Customers() {
           </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="bg-sarath-orange">Create New Invoice</Button>
+              <Button className="bg-choreo-blue">Create New Invoice</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[1000px] max-h-[80vh] overflow-auto">
               <DialogHeader>

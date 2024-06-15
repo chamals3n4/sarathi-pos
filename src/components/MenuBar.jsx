@@ -12,7 +12,7 @@ export default function MenuBar() {
           /> */}
         </Link>
         <nav className="z-10">
-          <ul className="flex flex-row items-center px-6 py-3 mb-12 text-indigo-100 bg-sarathi-text rounded-lg">
+          <ul className="flex flex-row items-center px-6 py-3 mb-12 text-indigo-100 bg-sarathi-grey rounded-lg">
             <li className="font-bold pr-8">
               <Link to="/">Home Page</Link>
             </li>

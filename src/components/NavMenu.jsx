@@ -20,7 +20,7 @@ export default function NavMenu() {
       </h1>
       <div className="flex flex-wrap justify-center gap-14 pt-[60px]">
         <Link to="/customers">
-          <Button className="text-white text-2xl w-[150px] h-[150px] bg-sarath-orange rounded-[10px] ">
+          <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px] ">
             <Users className="w-[60px] h-[60px] " />
           </Button>
           <h1 className="text-lg font-semibold pt-3 text-center">
@@ -28,7 +28,7 @@ export default function NavMenu() {
           </h1>
         </Link>
         <Link to="/items">
-          <Button className="text-white text-2xl w-[150px] h-[150px] bg-sarath-orange rounded-[10px]">
+          <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px]">
             <ListChecks className="w-[60px] h-[60px]" />
           </Button>
           <h1 className="text-lg font-semibold pt-3 text-center">
@@ -36,7 +36,7 @@ export default function NavMenu() {
           </h1>
         </Link>
         <Link to="/categories">
-          <Button className="text-white text-2xl w-[150px] h-[150px] bg-sarath-orange rounded-[10px]">
+          <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px]">
             <Layers className="w-[60px] h-[60px]" />
           </Button>
           <h1 className="text-lg font-semibold pt-3 text-center">
@@ -44,13 +44,13 @@ export default function NavMenu() {
           </h1>
         </Link>
         <Link to="/sales">
-          <Button className="text-white text-2xl w-[150px] h-[150px] bg-sarath-orange rounded-[10px]">
+          <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px]">
             <CirclePercent className="w-[60px] h-[60px]" />
           </Button>
           <h1 className="text-lg font-semibold pt-3 text-center">Sales</h1>
         </Link>
         <Link to="/invoice">
-          <Button className="text-white text-2xl w-[150px] h-[150px] bg-sarath-orange rounded-[10px]">
+          <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px]">
             <div>
               <FilePlus className="w-[60px] h-[60px]" />
             </div>
@@ -61,7 +61,7 @@ export default function NavMenu() {
         </Link>
 
         <Link to="/view-invoices">
-          <Button className="text-white text-2xl w-[150px] h-[150px] bg-sarath-orange rounded-[10px]">
+          <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px]">
             <div>
               <GalleryHorizontalEnd className="w-[60px] h-[60px]" />
             </div>

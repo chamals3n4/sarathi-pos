@@ -2,6 +2,15 @@ import { useState, useEffect } from "react";
 import supabase from "@/supabaseClient";
 import { TableDemo } from "@/components/Table";
 import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -154,7 +163,7 @@ export default function Customers() {
         <MenuBar />
         <div className="right-20 pb-6">
           <div className="pb-10 flex items-center space-x-4">
-            <div className="text-white text-2xl w-[50px] h-[50px] bg-sarath-orange rounded-[10px] flex items-center justify-center">
+            <div className="text-white text-2xl w-[50px] h-[50px] bg-choreo-blue rounded-[10px] flex items-center justify-center">
               <ListChecks className="w-[25px] h-[25px]" />
             </div>
             <h1 className="text-3xl text-sarathi-text font-bold">
@@ -163,7 +172,7 @@ export default function Customers() {
           </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="bg-sarath-orange">Add New Item</Button>
+              <Button className="bg-choreo-blue">Add New Item</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
@@ -267,7 +276,7 @@ export default function Customers() {
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
-                            className="bg-sarath-orange"
+                            className="bg-update-green h-8"
                             onClick={() => {
                               setCurrentItem(item);
                               setItemName(item.name);
@@ -276,7 +285,7 @@ export default function Customers() {
                               setSelectedCategoryId(item.category_id);
                             }}
                           >
-                            Update the Item
+                            Update Item
                           </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px]">
@@ -349,7 +358,12 @@ export default function Customers() {
                             </div>
                             <DialogFooter>
                               <DialogClose asChild>
-                                <Button type="submit">Update Now</Button>
+                                <Button
+                                  type="submit"
+                                  className="bg-update-green"
+                                >
+                                  Save Changes
+                                </Button>
                               </DialogClose>
                             </DialogFooter>
                           </form>

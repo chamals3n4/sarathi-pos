@@ -53,6 +53,10 @@ module.exports = {
         },
         "sarath-orange": "#F05941",
         "sarathi-text": "#0F172A",
+        "choreo-blue": "#6A70D9",
+        "update-green": "#3db377",
+        "delete-red": "#FE523C",
+        "sarathi-grey": "#373A40",
       },
       borderRadius: {
         lg: "var(--radius)",

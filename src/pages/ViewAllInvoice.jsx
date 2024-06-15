@@ -10,6 +10,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Spinner from "@/components/Spinner";
 import { GalleryHorizontalEnd } from "lucide-react";
 import MenuBar from "@/components/MenuBar";
@@ -38,12 +48,28 @@ export default function ViewAllInvoice() {
     }
     fetchaInvoices();
   }, []);
+
+  // function formatDateTime(dateTimeString) {
+  //   const options = {
+  //     year: "numeric",
+  //     month: "2-digit",
+  //     day: "2-digit",
+  //     hour: "2-digit",
+  //     minute: "2-digit",
+  //     second: "2-digit",
+  //     hour12: false,
+  //     timeZone: "UTC",
+  //   };
+
+  //   return new Date(dateTimeString).toLocaleString(undefined, options);
+  // }
+
   return (
     <>
       <div className="overflow-hidden bg-white py-24 pr-36 pl-36 mb-10 sm:py-16">
         <MenuBar />
         <div className="pb-10 flex items-center space-x-4">
-          <div className="text-white text-2xl w-[50px] h-[50px] bg-sarath-orange rounded-[10px] flex items-center justify-center">
+          <div className="text-white text-2xl w-[50px] h-[50px] bg-choreo-blue rounded-[10px] flex items-center justify-center">
             <GalleryHorizontalEnd className="w-[25px] h-[25px]" />
           </div>
           <h1 className="text-3xl text-sarathi-text font-bold">
@@ -65,6 +91,9 @@ export default function ViewAllInvoice() {
                 <TableHead className="text-lg font-medium">
                   Total Amount
                 </TableHead>
+                <TableHead className="text-lg font-medium">
+                  Created At
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -77,6 +106,9 @@ export default function ViewAllInvoice() {
                     </TableCell>
                     <TableCell className="text-lg">
                       {invoice.total_amount}
+                    </TableCell>
+                    <TableCell className="text-lg">
+                      {invoice.created_at}
                     </TableCell>
                   </TableRow>
                 ))
