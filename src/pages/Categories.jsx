@@ -37,12 +37,14 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Layers } from "lucide-react";
 import MenuBar from "@/components/MenuBar";
+import { ToastDescription } from "@radix-ui/react-toast";
 
 export default function Categories() {
   const [categories, setCategories] = useState([]);
 
   const [categoryName, setCategoryName] = useState("");
 
+  const [currentCategory, setCurrentCategory] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -89,6 +91,32 @@ export default function Categories() {
       console.log("Error inserting data", error.message);
     }
     navigate("/categories");
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    const updatedCategory = {
+      name: categoryName,
+    };
+
+    try {
+      const { data, error } = await supabase
+        .from("categories")
+        .update(updatedCategory)
+        .eq("id", currentCategory.id)
+        .select();
+      if (error) {
+        console.log("Error updating data");
+        toast.error("Error Updating Category");
+      } else {
+        console.log("Data updated successfully");
+        toast.success("Category Updated Successfully");
+      }
+    } catch (error) {
+      console.log("Error updating data");
+      toast.error("Error Updating Category");
+    }
+    return navigate("/category");
   };
 
   return (
@@ -155,6 +183,50 @@ export default function Categories() {
                   <TableRow key={category.id}>
                     <TableCell className="text-lg">{category.id}</TableCell>
                     <TableCell className="text-lg">{category.name}</TableCell>
+                    <TableCell className="text-lg">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            className="bg-sarath-orange"
+                            onClick={() => {
+                              setCurrentCategory(category);
+                              setCategoryName(category.name);
+                            }}
+                          >
+                            Update Category
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                          <DialogHeader>
+                            <DialogTitle>Update Category</DialogTitle>
+                          </DialogHeader>
+                          <form onSubmit={handleUpdate}>
+                            <div className="grid gap-4 py-4">
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="name" className="text-right">
+                                  Name
+                                </Label>
+                                <Input
+                                  id="name"
+                                  value={categoryName}
+                                  onChange={(e) =>
+                                    setCategoryName(e.target.value)
+                                  }
+                                  className="col-span-3"
+                                />
+                              </div>
+                            </div>
+                            <DialogFooter>
+                              {/* <Button type="submit">Save changes</Button> */}
+
+                              <DialogClose asChild>
+                                <Button type="submit">Save Changes</Button>
+                              </DialogClose>
+                            </DialogFooter>
+                          </form>
+                        </DialogContent>
+                      </Dialog>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (

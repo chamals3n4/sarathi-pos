@@ -27,7 +27,6 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Switch from "@/components/Swith";
 import Spinner from "@/components/Spinner";
 
 import Items from "./Items";
@@ -48,6 +47,8 @@ export default function Customers() {
   const [address, setAddress] = useState("");
 
   const [loading, setLoading] = useState(true);
+
+  const [currentCustomer, setCurrentCustomer] = useState(null);
 
   const navigate = useNavigate();
 
@@ -95,6 +96,39 @@ export default function Customers() {
       console.log("Error inserting data", error.message);
     }
     return navigate("/customers");
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+
+    if (!currentCustomer) {
+      console.error("No customer selected for update");
+      return;
+    }
+
+    const updatedCustomer = {
+      name: name,
+      phone: phone,
+      address: address,
+    };
+
+    try {
+      const { data, error } = await supabase
+        .from("customers")
+        .update(updatedCustomer)
+        .eq("id", currentCustomer.id)
+        .select();
+      if (error) {
+        console.log("Error updating data", error.message);
+        toast.error("Error Updating Customer");
+      } else {
+        console.log("Data updated successfully");
+        toast.success("Customer Updated Successfully");
+      }
+    } catch (error) {
+      console.log("Error updating data", error.message);
+      toast.error("Error Updating Customer");
+    }
   };
 
   return (
@@ -192,6 +226,72 @@ export default function Customers() {
                     <TableCell className="text-lg">{applicant.phone}</TableCell>
                     <TableCell className="text-lg">
                       {applicant.address}
+                    </TableCell>
+                    <TableCell className="text-lg">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            className="bg-sarath-orange"
+                            onClick={() => {
+                              setCurrentCustomer(applicant);
+                              setName(applicant.name);
+                              setPhone(applicant.phone);
+                              setAddress(applicant.address);
+                              console.log(applicant); // Debugging: log the selected applicant
+                            }}
+                          >
+                            Update Customer
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                          <DialogHeader>
+                            <DialogTitle>Update Customer</DialogTitle>
+                          </DialogHeader>
+                          <form onSubmit={handleUpdate}>
+                            <div className="grid gap-4 py-4">
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="name" className="text-right">
+                                  Name
+                                </Label>
+                                <Input
+                                  id="name"
+                                  value={name}
+                                  onChange={(e) => setName(e.target.value)}
+                                  className="col-span-3"
+                                />
+                              </div>
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="phone" className="text-right">
+                                  Phone
+                                </Label>
+                                <Input
+                                  id="phone"
+                                  value={phone}
+                                  onChange={(e) => setPhone(e.target.value)}
+                                  className="col-span-3"
+                                />
+                              </div>
+
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="address" className="text-right">
+                                  Address
+                                </Label>
+                                <Input
+                                  id="address"
+                                  value={address}
+                                  onChange={(e) => setAddress(e.target.value)}
+                                  className="col-span-3"
+                                />
+                              </div>
+                            </div>
+                            <DialogFooter>
+                              <DialogClose asChild>
+                                <Button type="submit">Save Changes</Button>
+                              </DialogClose>
+                            </DialogFooter>
+                          </form>
+                        </DialogContent>
+                      </Dialog>
                     </TableCell>
                   </TableRow>
                 ))
