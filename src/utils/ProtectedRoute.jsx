@@ -8,14 +8,9 @@ const ProtectedRoute = () => {
   const [session, setSession] = useState(null);
 
   useEffect(() => {
-    const fetchSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-    };
-
-    fetchSession();
+    });
 
     const {
       data: { subscription },
@@ -23,9 +18,7 @@ const ProtectedRoute = () => {
       setSession(session);
     });
 
-    return () => {
-      if (subscription) subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   return session ? (
@@ -34,7 +27,7 @@ const ProtectedRoute = () => {
     <div
       style={{ padding: "100px", paddingLeft: "400px", paddingRight: "400px" }}
     >
-      <h4 className="text-2xl mb-4">
+      <h4 className="text-2xl  mb-4">
         Before going to the application, you should authenticate for this
         application 🔐
       </h4>
