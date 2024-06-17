@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   ListChecks,
   ReceiptText,
+  TrendingUp,
   Users,
 } from "lucide-react";
 
@@ -45,7 +46,7 @@ export default function NavMenu() {
         </Link>
         <Link to="/sales">
           <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px]">
-            <CirclePercent className="w-[60px] h-[60px]" />
+            <TrendingUp className="w-[60px] h-[60px]" />
           </Button>
           <h1 className="text-lg font-semibold pt-3 text-center">Sales</h1>
         </Link>

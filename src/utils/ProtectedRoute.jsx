@@ -1,44 +1,31 @@
-import { Navigate, Outlet } from "react-router-dom";
-import supabase from "@/supabaseClient";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { Auth } from "@supabase/auth-ui-react";
 import { useState, useEffect } from "react";
+import { Outlet, Navigate } from "react-router-dom";
+import { createClient } from "@supabase/supabase-js";
 
-const ProtectedRoute = () => {
-  const [session, setSession] = useState(null);
+import supabase from "@/supabaseClient";
+
+export default function ProtectedRoute() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+      setUser(session?.user ?? null);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  return session ? (
-    <Outlet />
-  ) : (
-    <div
-      style={{ padding: "100px", paddingLeft: "400px", paddingRight: "400px" }}
-    >
-      <h4 className="text-2xl  mb-4">
-        Before going to the application, you should authenticate for this
-        application 🔐
-      </h4>
-      <Auth
-        supabaseClient={supabase}
-        showLinks={true}
-        appearance={{ theme: ThemeSupa }}
-        providers={false}
-      />
-    </div>
-  );
-};
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-export default ProtectedRoute;
+  return user ? <Outlet /> : <Navigate to="/login" />;
+}

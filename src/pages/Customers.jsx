@@ -210,7 +210,7 @@ export default function Customers() {
                       id="phone"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="col-span-3"
+                      className="col-span-3 focus:ring-sarathi-text"
                     />
                   </div>
 

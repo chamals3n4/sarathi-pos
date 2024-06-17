@@ -10,26 +10,29 @@ import NotFoundPage from "./pages/NotFoundPage";
 import NavMenu from "./components/NavMenu";
 import ViewAllInvoice from "./pages/ViewAllInvoice";
 import SingleGeneratedInvoice from "./pages/SingleGeneratedInvoice";
-
+import LoginReg from "./pages/LoginReg";
+import AuthComponent from "./components/AuthComponent";
 import ProtectedRoute from "./utils/ProtectedRoute";
-import Login from "./pages/Login";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<NavMenu />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/items" element={<Items />} />
-          <Route path="/categories" element={<Categories />} />
-          <Route path="/sales" element={<Sales />} />
-          <Route path="/invoice" element={<Invoice />} />
-          <Route path="/view-invoices" element={<ViewAllInvoice />} />
-          <Route
-            path="/view-invoices/:id"
-            element={<SingleGeneratedInvoice />}
-          />
+        <Route>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<NavMenu />} />
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/items" element={<Items />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/sales" element={<Sales />} />
+            <Route path="/invoice" element={<Invoice />} />
+            <Route path="/view-invoices" element={<ViewAllInvoice />} />
+            <Route
+              path="/view-invoices/:id"
+              element={<SingleGeneratedInvoice />}
+            />
+          </Route>
+          <Route path="/login" element={<AuthComponent />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
