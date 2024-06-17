@@ -13,6 +13,7 @@ import SingleGeneratedInvoice from "./pages/SingleGeneratedInvoice";
 import LoginReg from "./pages/LoginReg";
 import AuthComponent from "./components/AuthComponent";
 import ProtectedRoute from "./utils/ProtectedRoute";
+import SelectRole from "./pages/SelectRole";
 
 export default function App() {
   return (
@@ -20,7 +21,8 @@ export default function App() {
       <Routes>
         <Route>
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<NavMenu />} />
+            <Route path="/" element={<SelectRole />} />
+            <Route path="/admin" element={<NavMenu />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/items" element={<Items />} />
             <Route path="/categories" element={<Categories />} />

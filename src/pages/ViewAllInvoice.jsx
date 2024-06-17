@@ -64,6 +64,10 @@ export default function ViewAllInvoice() {
   //   return new Date(dateTimeString).toLocaleString(undefined, options);
   // }
 
+  function formatDate(dateString) {
+    return dateString.split("T")[0];
+  }
+
   return (
     <>
       <div className="overflow-hidden bg-white py-24 pr-36 pl-36 mb-10 sm:py-16">
@@ -82,25 +86,19 @@ export default function ViewAllInvoice() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px] text-lg font-medium">
-                  ID
-                </TableHead>
                 <TableHead className="text-lg font-medium">
                   Customer Name
                 </TableHead>
                 <TableHead className="text-lg font-medium">
                   Total Amount
                 </TableHead>
-                <TableHead className="text-lg font-medium">
-                  Created At
-                </TableHead>
+                <TableHead className="text-lg font-medium">Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {invoices.length > 0 ? (
                 invoices.map((invoice) => (
                   <TableRow key={invoice.id}>
-                    <TableCell className="text-lg">{invoice.id}</TableCell>
                     <TableCell className="text-lg">
                       {invoice.customers.name}
                     </TableCell>
@@ -108,7 +106,7 @@ export default function ViewAllInvoice() {
                       {invoice.total_amount}
                     </TableCell>
                     <TableCell className="text-lg">
-                      {invoice.created_at}
+                      {formatDate(invoice.created_at)}
                     </TableCell>
                   </TableRow>
                 ))

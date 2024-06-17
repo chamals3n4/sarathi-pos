@@ -57,6 +57,9 @@ module.exports = {
         "update-green": "#3db377",
         "delete-red": "#FE523C",
         "sarathi-grey": "#373A40",
+        "sarathi-purple": "#7F27FF",
+        "sarathi-orange": "#FF7F3E",
+        "regular-green": "#0A6847",
       },
       borderRadius: {
         lg: "var(--radius)",
