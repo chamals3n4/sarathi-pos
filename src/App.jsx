@@ -14,6 +14,7 @@ import LoginReg from "./pages/LoginReg";
 import AuthComponent from "./components/AuthComponent";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import SelectRole from "./pages/SelectRole";
+import AsgardeoAuth from "./components/AsgardeoAuth";
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
             />
           </Route>
           <Route path="/login" element={<AuthComponent />} />
+          {/* <Route path="/login" element={<AsgardeoAuth />} /> */}
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

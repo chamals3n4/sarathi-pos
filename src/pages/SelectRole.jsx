@@ -1,40 +1,115 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { ShieldEllipsis, UserCheck } from "lucide-react";
 import {
-  CirclePercent,
-  FilePlus,
-  GalleryHorizontalEnd,
-  Layers,
-  LayoutDashboard,
-  ListChecks,
-  ReceiptText,
-  ShieldEllipsis,
-  TrendingUp,
-  UserCheck,
-  Users,
-} from "lucide-react";
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { toast, ToastContainer } from "react-toastify";
+
+const ADMIN_PIN = "1899";
+const EMPLOYEE_PIN = "0000";
 
 export default function SelectRole() {
+  const [adminPin, setAdminPin] = useState("");
+  const [empPin, setEmpPin] = useState("");
+  const navigate = useNavigate();
+
+  const handleAdminSubmit = (e) => {
+    e.preventDefault();
+    if (adminPin === ADMIN_PIN) {
+      navigate("/admin");
+    } else {
+      toast.error("Invalid PIN");
+    }
+  };
+
+  const handleEmployeeSubmit = (e) => {
+    e.preventDefault();
+    if (empPin === EMPLOYEE_PIN) {
+      navigate("/admin");
+    } else {
+      toast.error("Invalid PIN");
+    }
+  };
+
   return (
     <>
-      <div className="flex flex-wrap justify-center gap-[100px] pt-[60px]">
-        <Link to="/admin">
-          <Button className="text-white text-2xl w-[350px] h-[150px] bg-delete-red rounded-[10px] ">
-            <ShieldEllipsis className="w-[60px] h-[60px] " />
-          </Button>
-          <h1 className="text-xl font-semibold pt-3 text-center">
-            Admin Dashboard
-          </h1>
-        </Link>
-        <Link to="/regular">
+      <ToastContainer />
+      <div className="flex flex-wrap justify-center gap-[100px] pt-[150px]">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="text-white text-2xl w-[350px] h-[150px] bg-delete-red rounded-[10px]">
+              Admin Dashboard
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Enter Pin Number</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleAdminSubmit}>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Input
+                    id="pin"
+                    type="tel"
+                    value={adminPin}
+                    onChange={(e) => setAdminPin(e.target.value)}
+                    className="col-span-3"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit">Save Changes</Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="text-white text-2xl w-[350px] h-[150px] bg-update-green rounded-[10px]">
+              Regular Dashboard
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Enter Pin Number</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleEmployeeSubmit}>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Input
+                    id="pin"
+                    type="tel"
+                    value={empPin}
+                    onChange={(e) => setEmpPin(e.target.value)}
+                    className="col-span-3"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit">Save Changes</Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* <Link to="/regular">
           <Button className="text-white text-2xl w-[350px] h-[150px] bg-update-green rounded-[10px]">
             <UserCheck className="w-[60px] h-[60px]" />
           </Button>
           <h1 className="text-xl font-semibold pt-3 text-center">
             Regular Dashboard
           </h1>
-        </Link>
+        </Link> */}
       </div>
     </>
   );

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import supabase from "@/supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function Example() {
   const [email, setEmail] = useState("");
@@ -22,8 +23,11 @@ export default function Example() {
     if (error) {
       setError(error.message);
     } else {
-      alert("Logged in successfully", user);
-      navigate("/");
+      //alert("Logged in successfully", user);
+      toast.success(`Logged in successfully.`);
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     }
 
     setLoading(false);
@@ -32,6 +36,7 @@ export default function Example() {
   const handleChange = async (e) => {};
   return (
     <>
+      <ToastContainer />
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-20 text-center text-3xl font-semibold leading-9 tracking-tight text-sarathi-text">
@@ -46,7 +51,7 @@ export default function Example() {
                 htmlFor="email"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                email
+                Email Address
               </label>
               <div className="mt-2">
                 <input

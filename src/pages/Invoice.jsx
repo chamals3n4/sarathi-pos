@@ -103,7 +103,7 @@ export default function CreateInvoice() {
         parseFloat(item.price) <= 0 ||
         parseInt(item.qty, 10) <= 0
       ) {
-        alert("All items must be selected with valid prce and quantity");
+        alert("All items must be selected with valid price and quantity");
         return;
       }
     }
@@ -132,7 +132,7 @@ export default function CreateInvoice() {
 
       const invoiceItemsData = formItems.map((item) => ({
         invoice_id: invoiceId,
-        item_id: item.id, // Corrected to use item.id
+        item_id: item.id,
         quantity: item.qty,
         price: parseFloat(item.price),
       }));
@@ -146,19 +146,49 @@ export default function CreateInvoice() {
           "Error inserting invoice items data",
           invoiceItemsError.message
         );
-      } else {
-        console.log(
-          "Invoice and items inserted successfully",
-          invoiceDataInserted,
-          invoiceItemsDataInserted
-        );
-
-        toast.success("Invoice Created Successfully");
-
-        setTimeout(() => {
-          navigate(`/view-invoices/${invoiceId}`);
-        }, 1000);
+        return;
       }
+
+      // Update the item quantities in the items table
+      for (const formItem of formItems) {
+        const selectedItem = items.find(
+          (item) => item.id === parseInt(formItem.id, 10)
+        );
+        if (selectedItem) {
+          const newQty = selectedItem.qty - parseInt(formItem.qty, 10);
+          if (newQty < 0) {
+            alert(`Not enough quantity for item: ${selectedItem.name}`);
+            return;
+          }
+
+          const { error: updateError } = await supabase
+            .from("items")
+            .update({ qty: newQty })
+            .eq("id", selectedItem.id);
+
+          if (updateError) {
+            console.error("Error updating item quantity", updateError.message);
+            return;
+          }
+
+          // Check if the item quantity has reached zero and display a toast error
+          if (newQty === 0) {
+            toast.error(`Item ${selectedItem.name} is now out of stock.`);
+          }
+        }
+      }
+
+      console.log(
+        "Invoice and items inserted successfully",
+        invoiceDataInserted,
+        invoiceItemsDataInserted
+      );
+
+      toast.success("Invoice Created Successfully");
+
+      setTimeout(() => {
+        navigate(`/view-invoices/${invoiceId}`);
+      }, 1000);
     } catch (error) {
       console.error("Error inserting data", error.message);
     }

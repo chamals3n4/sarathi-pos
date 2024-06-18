@@ -103,7 +103,7 @@ export default function ViewAllInvoice() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <Table>
+            {/* <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="text-lg font-medium">Month</TableHead>
@@ -128,7 +128,7 @@ export default function ViewAllInvoice() {
                   </TableRow>
                 )}
               </TableBody>
-            </Table>
+            </Table> */}
           </>
         )}
       </div>

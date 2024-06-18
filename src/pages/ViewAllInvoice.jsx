@@ -23,6 +23,7 @@ import {
 import Spinner from "@/components/Spinner";
 import { GalleryHorizontalEnd } from "lucide-react";
 import MenuBar from "@/components/MenuBar";
+import Switch from "@/components/Swith";
 
 export default function ViewAllInvoice() {
   const [invoices, setInvoices] = useState([]);
@@ -48,21 +49,6 @@ export default function ViewAllInvoice() {
     }
     fetchaInvoices();
   }, []);
-
-  // function formatDateTime(dateTimeString) {
-  //   const options = {
-  //     year: "numeric",
-  //     month: "2-digit",
-  //     day: "2-digit",
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //     second: "2-digit",
-  //     hour12: false,
-  //     timeZone: "UTC",
-  //   };
-
-  //   return new Date(dateTimeString).toLocaleString(undefined, options);
-  // }
 
   function formatDate(dateString) {
     return dateString.split("T")[0];
