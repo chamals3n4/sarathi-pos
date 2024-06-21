@@ -23,7 +23,8 @@ export default function App() {
         <Route>
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<SelectRole />} />
-            <Route path="/admin" element={<NavMenu />} />
+            <Route path="/admin" element={<NavMenu role={"admin"} />} />
+            <Route path="/regular" element={<NavMenu role={"regular"} />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/items" element={<Items />} />
             <Route path="/categories" element={<Categories />} />

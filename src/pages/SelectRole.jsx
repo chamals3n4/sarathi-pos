@@ -34,7 +34,7 @@ export default function SelectRole() {
   const handleEmployeeSubmit = (e) => {
     e.preventDefault();
     if (empPin === EMPLOYEE_PIN) {
-      navigate("/admin");
+      navigate("/regular");
     } else {
       toast.error("Invalid PIN");
     }

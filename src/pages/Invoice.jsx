@@ -23,8 +23,10 @@ import { useNavigate } from "react-router-dom";
 
 import { toast, ToastContainer } from "react-toastify";
 import { Label } from "@radix-ui/react-label";
-import { FilePlus } from "lucide-react";
+import { CirclePlus, FilePlus, Trash2 } from "lucide-react";
 import MenuBar from "@/components/MenuBar";
+import { Switch } from "@headlessui/react";
+import { Select } from "@/components/ui/select";
 
 export default function CreateInvoice() {
   const [items, setItems] = useState([]);
@@ -234,6 +236,12 @@ export default function CreateInvoice() {
     setFormItems(values);
   };
 
+  const handleDeleteFormItem = (index) => {
+    const values = [...formItems];
+    values.splice(index, 1);
+    setFormItems(values);
+  };
+
   return (
     <>
       <ToastContainer />
@@ -265,7 +273,7 @@ export default function CreateInvoice() {
                     id="customer"
                     value={selectedCustomerId}
                     onChange={(e) => setSelectedCustomerId(e.target.value)}
-                    className="col-span-12 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
+                    className="col-span-12 block w-full pl-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
                   >
                     <option value="">Select Customer</option>
                     {customers.map((customer) => (
@@ -325,7 +333,7 @@ export default function CreateInvoice() {
                       name="id"
                       value={item.id}
                       onChange={(e) => handleInputChange(index, e)}
-                      className="col-span-3 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
+                      className="col-span-3 pl-4 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
                     >
                       <option value="">Select Item</option>
                       {items.map((item) => (
@@ -334,6 +342,7 @@ export default function CreateInvoice() {
                         </option>
                       ))}
                     </select>
+
                     <div className="col-span-2">
                       <Label></Label>
                       <span>
@@ -351,11 +360,26 @@ export default function CreateInvoice() {
                       onChange={(e) => handleInputChange(index, e)}
                       className="col-span-2"
                     />
+
+                    <h1
+                      onClick={() => handleDeleteFormItem(index)}
+                      className="text-md flex gap-2 hover:cursor-pointer text-delete-red font-bold col-span-2"
+                    >
+                      <Trash2 />
+                      Remove Item
+                    </h1>
                   </div>
                 ))}
-                <Button type="button" onClick={addFormItem}>
+                {/* <Button type="button" onClick={addFormItem}>
                   + Add Item
-                </Button>
+                </Button> */}
+                <h1
+                  onClick={addFormItem}
+                  className="text-md flex gap-2 pl-1 hover:cursor-pointer text-choreo-blue font-bold col-span-2"
+                >
+                  <CirclePlus className="h-" />
+                  Add Item
+                </h1>
                 <DialogFooter>
                   <DialogClose asChild>
                     <Button type="submit">Finish and Generate Invoice</Button>

@@ -1,4 +1,3 @@
-import { AwardIcon, PaperclipIcon } from "lucide-react";
 import supabase from "@/supabaseClient";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -83,8 +82,32 @@ export default function InvoicePDF() {
       <style>
         {`
           @media print {
+            body {
+              width: 80mm;
+              margin: 0;
+              padding: 0;
+            }
             .no-print {
               display: none !important;
+            }
+            #invoice-content {
+              width: 80mm;
+              font-size: 12px;
+            }
+            h2 {
+              font-size: 16px;
+            }
+            .text-lg {
+              font-size: 12px;
+            }
+            .text-sm {
+              font-size: 10px;
+            }
+            .pb-10 {
+              padding-bottom: 5mm;
+            }
+            .pl-4 {
+              padding-left: 2mm;
             }
           }
         `}
