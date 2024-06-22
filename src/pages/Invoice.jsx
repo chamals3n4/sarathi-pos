@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import supabase from "@/supabaseClient";
 import {
   Dialog,
@@ -9,24 +9,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-
 import { toast, ToastContainer } from "react-toastify";
 import { Label } from "@radix-ui/react-label";
-import { CirclePlus, FilePlus, Trash2 } from "lucide-react";
+import { CirclePlus, FilePlus, Flame, Trash2 } from "lucide-react";
 import MenuBar from "@/components/MenuBar";
-import { Switch } from "@headlessui/react";
-import { Select } from "@/components/ui/select";
 
 export default function CreateInvoice() {
   const [items, setItems] = useState([]);
@@ -35,7 +24,19 @@ export default function CreateInvoice() {
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const [formItems, setFormItems] = useState([{ id: "", price: "", qty: "" }]);
   const [loading, setLoading] = useState(true);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const [itemSearchTerm, setItemSearchTerm] = useState("");
+  const [itemFocusedIndex, setItemFocusedIndex] = useState(-1);
+  const [isItemDropdownOpen, setIsItemDropdownOpen] = useState(false);
+
   const navigate = useNavigate();
+
+  const dropdownRef = useRef(null);
+  const itemDropdownRef = useRef(null);
 
   useEffect(() => {
     async function fetchItems() {
@@ -97,7 +98,6 @@ export default function CreateInvoice() {
       return;
     }
 
-    // Ensure all form items have valid ids
     for (const item of formItems) {
       if (
         !item.id ||
@@ -119,7 +119,6 @@ export default function CreateInvoice() {
     };
 
     try {
-      // Insert into invoices table
       const { data: invoiceDataInserted, error: invoiceError } = await supabase
         .from("invoices")
         .insert([invoiceData])
@@ -139,7 +138,6 @@ export default function CreateInvoice() {
         price: parseFloat(item.price),
       }));
 
-      // Insert into invoice_items table
       const { data: invoiceItemsDataInserted, error: invoiceItemsError } =
         await supabase.from("invoice_items").insert(invoiceItemsData).select();
 
@@ -151,7 +149,6 @@ export default function CreateInvoice() {
         return;
       }
 
-      // Update the item quantities in the items table
       for (const formItem of formItems) {
         const selectedItem = items.find(
           (item) => item.id === parseInt(formItem.id, 10)
@@ -173,18 +170,11 @@ export default function CreateInvoice() {
             return;
           }
 
-          // Check if the item quantity has reached zero and display a toast error
           if (newQty === 0) {
             toast.error(`Item ${selectedItem.name} is now out of stock.`);
           }
         }
       }
-
-      console.log(
-        "Invoice and items inserted successfully",
-        invoiceDataInserted,
-        invoiceItemsDataInserted
-      );
 
       toast.success("Invoice Created Successfully");
 
@@ -200,36 +190,17 @@ export default function CreateInvoice() {
     setFormItems([...formItems, { id: "", price: "", qty: "" }]);
   };
 
-  // const handleInputChange = (index, event) => {
-  //   const values = [...formItems];
-  //   const { name, value } = event.target;
-  //   values[index][name] = value;
-
-  //   // If the item ID is changed, update the price
-  //   if (name === "id") {
-  //     const selectedItem = items.find((item) => item.id === value);
-  //     if (selectedItem) {
-  //       values[index].price = selectedItem.price;
-  //     }
-  //   }
-
-  //   setFormItems(values);
-  // };
-
   const handleInputChange = (index, event) => {
     const values = [...formItems];
     const { name, value } = event.target;
     values[index][name] = value;
 
-    // If the item ID is changed, update the price
     if (name === "id") {
       const selectedItem = items.find(
         (item) => item.id === parseInt(value, 10)
       );
-      console.log("Selected item:", selectedItem); // Debugging log
       if (selectedItem) {
         values[index].price = selectedItem.price.toString();
-        console.log("Updated price:", values[index].price); // Debugging log
       }
     }
 
@@ -241,6 +212,137 @@ export default function CreateInvoice() {
     values.splice(index, 1);
     setFormItems(values);
   };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setFocusedIndex(-1);
+    setIsDropdownOpen(true);
+  };
+
+  const handleCustomerSelect = (customerId, customerName) => {
+    setSelectedCustomerId(customerId);
+    setSearchTerm(customerName);
+    setFocusedIndex(-1);
+    setIsDropdownOpen(false);
+  };
+
+  const handleKeyDown = (e) => {
+    if (!isDropdownOpen) {
+      setIsDropdownOpen(true);
+      return;
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setFocusedIndex((prev) =>
+        prev < filteredCustomers.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setFocusedIndex((prev) => (prev > 0 ? prev - 1 : prev));
+    } else if (e.key === "Enter" && focusedIndex >= 0) {
+      e.preventDefault();
+      const selectedCustomer = filteredCustomers[focusedIndex];
+      handleCustomerSelect(selectedCustomer.id, selectedCustomer.name);
+    } else if (e.key === "Escape") {
+      setIsDropdownOpen(false);
+    }
+  };
+
+  const handleItemSearchChange = (e) => {
+    setItemSearchTerm(e.target.value);
+    setItemFocusedIndex(-1);
+    setIsItemDropdownOpen(true);
+  };
+
+  const handleItemSelect = (index, itemId, itemName) => {
+    const values = [...formItems];
+    values[index].id = itemId;
+    const selectedItem = items.find((item) => item.id === itemId);
+    if (selectedItem) {
+      values[index].price = selectedItem.price.toString();
+    }
+    setFormItems(values);
+    setItemSearchTerm(itemName);
+    setItemFocusedIndex(-1);
+    setIsItemDropdownOpen(false);
+  };
+
+  const handleItemKeyDown = (e) => {
+    if (!isItemDropdownOpen) {
+      setIsItemDropdownOpen(true);
+      return;
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setItemFocusedIndex((prev) =>
+        prev < filteredItems.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setItemFocusedIndex((prev) => (prev > 0 ? prev - 1 : prev));
+    } else if (e.key === "Enter" && itemFocusedIndex >= 0) {
+      e.preventDefault();
+      const selectedItem = filteredItems[itemFocusedIndex];
+      handleItemSelect(index, selectedItem.id, selectedItem.name);
+    } else if (e.key === "Escape") {
+      setIsItemDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (itemDropdownRef.current) {
+      const focusedElement = itemDropdownRef.current.children[itemFocusedIndex];
+      if (focusedElement) {
+        focusedElement.scrollIntoView({ block: "nearest" });
+      }
+    }
+  }, [itemFocusedIndex]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        itemDropdownRef.current &&
+        !itemDropdownRef.current.contains(event.target)
+      ) {
+        setIsItemDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (dropdownRef.current) {
+      const focusedElement = dropdownRef.current.children[focusedIndex];
+      if (focusedElement) {
+        focusedElement.scrollIntoView({ block: "nearest" });
+      }
+    }
+  }, [focusedIndex]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const filteredCustomers = customers.filter((customer) =>
+    customer.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(itemSearchTerm.toLowerCase())
+  );
 
   return (
     <>
@@ -269,66 +371,58 @@ export default function CreateInvoice() {
                 className="max-h-[70vh] overflow-auto"
               >
                 <div className="grid grid-cols-12 gap-4 py-4 items-center">
-                  <select
-                    id="customer"
-                    value={selectedCustomerId}
-                    onChange={(e) => setSelectedCustomerId(e.target.value)}
-                    className="col-span-12 block w-full pl-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
-                  >
-                    <option value="">Select Customer</option>
-                    {customers.map((customer) => (
-                      <option key={customer.id} value={customer.id}>
-                        {customer.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {/* {formItems.map((item, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-12 gap-4 py-4 pl-1 items-center"
-                  >
-                    <select
-                      id={`id-${index}`}
-                      name="id"
-                      value={item.id}
-                      onChange={(e) => handleInputChange(index, e)}
-                      className="col-span-3"
-                    >
-                      <option value="">Select Item</option>
-                      {items.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.name}
-                        </option>
-                      ))}
-                    </select>
-                    <Input
-                      id={`price-${index}`}
-                      name="price"
-                      placeholder="Price"
-                      value={item.price}
-                      onChange={(e) => handleInputChange(index, e)}
-                      className="col-span-3"
-                      disabled
+                  <div className="relative col-span-12">
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                      onKeyDown={handleKeyDown}
+                      onFocus={() => setIsDropdownOpen(true)}
+                      placeholder="Search Customer"
+                      className="block w-[300px] pl-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
                     />
-
-                    <Input
-                      id={`qty-${index}`}
-                      name="qty"
-                      placeholder="Quantity"
-                      value={item.qty}
-                      onChange={(e) => handleInputChange(index, e)}
-                      className="col-span-3"
+                    {isDropdownOpen && searchTerm && (
+                      <ul
+                        ref={dropdownRef}
+                        className="absolute z-10 mt-1 w-[300px] bg-white shadow-lg max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
+                      >
+                        {filteredCustomers.length > 0 ? (
+                          filteredCustomers.map((customer, index) => (
+                            <li
+                              key={customer.id}
+                              onClick={() =>
+                                handleCustomerSelect(customer.id, customer.name)
+                              }
+                              className={`cursor-pointer select-none relative py-2 pl-3 pr-9 ${
+                                index === focusedIndex
+                                  ? "bg-gray-200"
+                                  : "hover:bg-gray-100"
+                              }`}
+                            >
+                              {customer.name}
+                            </li>
+                          ))
+                        ) : (
+                          <li className="cursor-default select-none relative py-2 pl-3 pr-9 text-gray-700">
+                            No results found
+                          </li>
+                        )}
+                      </ul>
+                    )}
+                    <input
+                      type="hidden"
+                      id="customer"
+                      value={selectedCustomerId || ""}
+                      onChange={() => {}}
                     />
                   </div>
-                ))} */}
-
+                </div>
                 {formItems.map((item, index) => (
                   <div
                     key={index}
                     className="grid grid-cols-12 gap-4 py-4 pl-1 items-center"
                   >
-                    <select
+                    {/* <select
                       id={`id-${index}`}
                       name="id"
                       value={item.id}
@@ -341,15 +435,54 @@ export default function CreateInvoice() {
                           {item.name}
                         </option>
                       ))}
-                    </select>
+                    </select> */}
+
+                    <div className="relative col-span-3">
+                      <input
+                        type="text"
+                        value={itemSearchTerm}
+                        onChange={handleItemSearchChange}
+                        onKeyDown={handleItemKeyDown}
+                        onFocus={() => setIsItemDropdownOpen(true)}
+                        placeholder="Search Item"
+                        className="block w-full pl-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
+                      />
+                      {isItemDropdownOpen && itemSearchTerm && (
+                        <ul
+                          ref={itemDropdownRef}
+                          className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
+                        >
+                          {filteredItems.length > 0 ? (
+                            filteredItems.map((item, idx) => (
+                              <li
+                                key={item.id}
+                                onClick={() =>
+                                  handleItemSelect(index, item.id, item.name)
+                                }
+                                className={`cursor-pointer select-none relative py-2 pl-3 pr-9 ${
+                                  idx === itemFocusedIndex
+                                    ? "bg-gray-200"
+                                    : "hover:bg-gray-100"
+                                }`}
+                              >
+                                {item.name}
+                              </li>
+                            ))
+                          ) : (
+                            <li className="cursor-default select-none relative py-2 pl-3 pr-9 text-gray-700">
+                              No results found
+                            </li>
+                          )}
+                        </ul>
+                      )}
+                    </div>
 
                     <div className="col-span-2">
                       <Label></Label>
                       <span>
                         {item.price
-                          ? `Rs. ${parseFloat(item.price).toFixed(2)}` // Using "Rs." at the start
-                          : // ? `${parseFloat(item.price).toFixed(2)} LKR` // Uncomment this line and comment the above line to use "LKR" at the end
-                            "-"}
+                          ? `Rs. ${parseFloat(item.price).toFixed(2)}`
+                          : "-"}
                       </span>
                     </div>
                     <Input
@@ -370,14 +503,11 @@ export default function CreateInvoice() {
                     </h1>
                   </div>
                 ))}
-                {/* <Button type="button" onClick={addFormItem}>
-                  + Add Item
-                </Button> */}
                 <h1
                   onClick={addFormItem}
                   className="text-md flex gap-2 pl-1 hover:cursor-pointer text-choreo-blue font-bold col-span-2"
                 >
-                  <CirclePlus className="h-" />
+                  <CirclePlus />
                   Add Item
                 </h1>
                 <DialogFooter>
