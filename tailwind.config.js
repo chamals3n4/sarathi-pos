@@ -53,6 +53,7 @@ module.exports = {
         },
         "sarath-orange": "#F05941",
         "sarathi-text": "#0F172A",
+        "pos-grey": "#686D76",
         "choreo-blue": "#6A70D9",
         "update-green": "#3db377",
         "delete-red": "#FE523C",

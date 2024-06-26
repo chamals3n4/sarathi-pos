@@ -31,8 +31,8 @@ export default function App() {
             <Route path="/items" element={<Items />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/sales" element={<Sales />} />
-            <Route path="/invoice" element={<Invoice />} />
-            <Route path="/chamalsena" element={<CreateNewInvoice />} />
+            <Route path="/chamalsena" element={<Invoice />} />
+            <Route path="/invoice" element={<CreateNewInvoice />} />
             <Route path="/view-invoices" element={<ViewAllInvoice />} />
             <Route
               path="/view-invoices/:id"
