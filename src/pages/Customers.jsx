@@ -241,9 +241,9 @@ export default function Customers() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px] text-lg font-medium">
+                {/* <TableHead className="w-[100px] text-lg font-medium">
                   ID
-                </TableHead>
+                </TableHead> */}
                 <TableHead className="text-lg font-medium">Name</TableHead>
                 <TableHead className="text-lg font-medium">Phone</TableHead>
                 <TableHead className="text-lg font-medium">Address</TableHead>
@@ -253,7 +253,7 @@ export default function Customers() {
               {applicants.length > 0 ? (
                 applicants.map((applicant) => (
                   <TableRow key={applicant.id}>
-                    <TableCell className="text-lg">{applicant.id}</TableCell>
+                    {/* <TableCell className="text-lg">{applicant.id}</TableCell> */}
                     <TableCell className="text-lg">{applicant.name}</TableCell>
                     <TableCell className="text-lg">{applicant.phone}</TableCell>
                     <TableCell className="text-lg">

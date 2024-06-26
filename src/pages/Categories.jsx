@@ -166,7 +166,7 @@ export default function Categories() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[200px] text-lg">ID</TableHead>
+                {/* <TableHead className="w-[200px] text-lg">ID</TableHead> */}
                 <TableHead className="text-lg">Category Name</TableHead>
               </TableRow>
             </TableHeader>
@@ -174,7 +174,7 @@ export default function Categories() {
               {categories.length > 0 ? (
                 categories.map((category) => (
                   <TableRow key={category.id}>
-                    <TableCell className="text-lg">{category.id}</TableCell>
+                    {/* <TableCell className="text-lg">{category.id}</TableCell> */}
                     <TableCell className="text-lg">{category.name}</TableCell>
                     <TableCell className="text-lg">
                       <Dialog>

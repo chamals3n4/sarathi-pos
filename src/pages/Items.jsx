@@ -248,9 +248,9 @@ export default function Customers() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px] text-lg font-medium">
+                {/* <TableHead className="w-[100px] text-lg font-medium">
                   ID
-                </TableHead>
+                </TableHead> */}
                 <TableHead className="text-lg font-medium">Name</TableHead>
                 <TableHead className="text-lg font-medium">Price</TableHead>
                 <TableHead className="text-lg font-medium">Quantity</TableHead>
@@ -264,7 +264,7 @@ export default function Customers() {
               {items.length > 0 ? (
                 items.map((item) => (
                   <TableRow key={item.id}>
-                    <TableCell className="text-lg">{item.id}</TableCell>
+                    {/* <TableCell className="text-lg">{item.id}</TableCell> */}
                     <TableCell className="text-lg">{item.name}</TableCell>
                     <TableCell className="text-lg">{item.price}</TableCell>
                     <TableCell className="text-lg">{item.qty}</TableCell>
