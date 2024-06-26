@@ -43,7 +43,6 @@ import { ListChecks } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MenuBar from "@/components/MenuBar";
-import { ToastDescription } from "@radix-ui/react-toast";
 
 export default function Customers() {
   const [items, setItems] = useState([]);
@@ -56,6 +55,7 @@ export default function Customers() {
   const [currentItem, setCurrentItem] = useState(null); // State to store the current item being edited
 
   const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {

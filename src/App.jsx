@@ -15,6 +15,8 @@ import AuthComponent from "./components/AuthComponent";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import SelectRole from "./pages/SelectRole";
 import AsgardeoAuth from "./components/AsgardeoAuth";
+import CreateInvoice from "./pages/Invoice";
+import CreateNewInvoice from "./pages/CreateInvoice";
 
 export default function App() {
   return (
@@ -30,6 +32,7 @@ export default function App() {
             <Route path="/categories" element={<Categories />} />
             <Route path="/sales" element={<Sales />} />
             <Route path="/invoice" element={<Invoice />} />
+            <Route path="/chamalsena" element={<CreateNewInvoice />} />
             <Route path="/view-invoices" element={<ViewAllInvoice />} />
             <Route
               path="/view-invoices/:id"

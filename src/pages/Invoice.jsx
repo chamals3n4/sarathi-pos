@@ -22,21 +22,25 @@ export default function CreateInvoice() {
   const [categories, setCategories] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
-  const [formItems, setFormItems] = useState([{ id: "", price: "", qty: "" }]);
+  const [formItems, setFormItems] = useState([
+    {
+      id: "",
+      price: "",
+      qty: "",
+      itemSearchTerm: "",
+      itemFocusedIndex: -1,
+      isItemDropdownOpen: false,
+    },
+  ]);
   const [loading, setLoading] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const [itemSearchTerm, setItemSearchTerm] = useState("");
-  const [itemFocusedIndex, setItemFocusedIndex] = useState(-1);
-  const [isItemDropdownOpen, setIsItemDropdownOpen] = useState(false);
-
   const navigate = useNavigate();
 
   const dropdownRef = useRef(null);
-  const itemDropdownRef = useRef(null);
 
   useEffect(() => {
     async function fetchItems() {
@@ -187,7 +191,17 @@ export default function CreateInvoice() {
   };
 
   const addFormItem = () => {
-    setFormItems([...formItems, { id: "", price: "", qty: "" }]);
+    setFormItems([
+      ...formItems,
+      {
+        id: "",
+        price: "",
+        qty: "",
+        itemSearchTerm: "",
+        itemFocusedIndex: -1,
+        isItemDropdownOpen: false,
+      },
+    ]);
   };
 
   const handleInputChange = (index, event) => {
@@ -248,10 +262,12 @@ export default function CreateInvoice() {
     }
   };
 
-  const handleItemSearchChange = (e) => {
-    setItemSearchTerm(e.target.value);
-    setItemFocusedIndex(-1);
-    setIsItemDropdownOpen(true);
+  const handleItemSearchChange = (index, e) => {
+    const values = [...formItems];
+    values[index].itemSearchTerm = e.target.value;
+    values[index].itemFocusedIndex = -1;
+    values[index].isItemDropdownOpen = true;
+    setFormItems(values);
   };
 
   const handleItemSelect = (index, itemId, itemName) => {
@@ -261,265 +277,209 @@ export default function CreateInvoice() {
     if (selectedItem) {
       values[index].price = selectedItem.price.toString();
     }
+    values[index].itemSearchTerm = itemName;
+    values[index].itemFocusedIndex = -1;
+    values[index].isItemDropdownOpen = false;
     setFormItems(values);
-    setItemSearchTerm(itemName);
-    setItemFocusedIndex(-1);
-    setIsItemDropdownOpen(false);
   };
 
-  const handleItemKeyDown = (e) => {
-    if (!isItemDropdownOpen) {
-      setIsItemDropdownOpen(true);
+  const handleItemKeyDown = (index, e) => {
+    const values = [...formItems];
+    if (!values[index].isItemDropdownOpen) {
+      values[index].isItemDropdownOpen = true;
+      setFormItems(values);
       return;
     }
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setItemFocusedIndex((prev) =>
-        prev < filteredItems.length - 1 ? prev + 1 : prev
+      values[index].itemFocusedIndex = Math.min(
+        values[index].itemFocusedIndex + 1,
+        filteredItems.length - 1
       );
+      setFormItems(values);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setItemFocusedIndex((prev) => (prev > 0 ? prev - 1 : prev));
-    } else if (e.key === "Enter" && itemFocusedIndex >= 0) {
+      values[index].itemFocusedIndex = Math.max(
+        values[index].itemFocusedIndex - 1,
+        0
+      );
+      setFormItems(values);
+    } else if (e.key === "Enter" && values[index].itemFocusedIndex >= 0) {
       e.preventDefault();
-      const selectedItem = filteredItems[itemFocusedIndex];
+      const selectedItem = filteredItems[values[index].itemFocusedIndex];
       handleItemSelect(index, selectedItem.id, selectedItem.name);
     } else if (e.key === "Escape") {
-      setIsItemDropdownOpen(false);
+      values[index].isItemDropdownOpen = false;
+      setFormItems(values);
     }
   };
-
-  useEffect(() => {
-    if (itemDropdownRef.current) {
-      const focusedElement = itemDropdownRef.current.children[itemFocusedIndex];
-      if (focusedElement) {
-        focusedElement.scrollIntoView({ block: "nearest" });
-      }
-    }
-  }, [itemFocusedIndex]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        itemDropdownRef.current &&
-        !itemDropdownRef.current.contains(event.target)
-      ) {
-        setIsItemDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (dropdownRef.current) {
-      const focusedElement = dropdownRef.current.children[focusedIndex];
-      if (focusedElement) {
-        focusedElement.scrollIntoView({ block: "nearest" });
-      }
-    }
-  }, [focusedIndex]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   const filteredCustomers = customers.filter((customer) =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredItems = items.filter((item) =>
-    item.name.toLowerCase().includes(itemSearchTerm.toLowerCase())
-  );
+  const filteredItems = (searchTerm) =>
+    items.filter((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+  const getCategoryName = (categoryId) => {
+    const category = categories.find((category) => category.id === categoryId);
+    return category ? category.name : "Unknown";
+  };
+
+  const getCustomerName = (customerId) => {
+    const customer = customers.find((customer) => customer.id === customerId);
+    return customer ? customer.name : "Unknown";
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
-      <ToastContainer />
-      <div className="overflow-hidden bg-white py-24 pr-36 pl-36 mb-10 sm:py-16">
-        <MenuBar />
-        <div className="right-20 pb-6">
-          <div className="pb-10 flex items-center space-x-4">
-            <div className="text-white text-2xl w-[50px] h-[50px] bg-choreo-blue rounded-[10px] flex items-center justify-center">
-              <FilePlus className="w-[25px] h-[25px]" />
-            </div>
-            <h1 className="text-3xl text-sarathi-text font-bold">
-              Create Invoice
-            </h1>
-          </div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="bg-choreo-blue">Create New Invoice</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[1000px] max-h-[80vh] overflow-auto">
-              <DialogHeader>
-                <DialogTitle>Create New Invoice</DialogTitle>
-              </DialogHeader>
-              <form
-                onSubmit={handleSubmit}
-                className="max-h-[70vh] overflow-auto"
+      <MenuBar />
+      <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        <h1 className="text-2xl font-semibold mb-6">Create Invoice</h1>
+        <div className="pl-20 pr-20">
+          <form onSubmit={handleSubmit}>
+            <div className="mb-6">
+              <Label
+                htmlFor="customerSearch"
+                className="block text-sm font-medium text-gray-700"
               >
-                <div className="grid grid-cols-12 gap-4 py-4 items-center">
-                  <div className="relative col-span-12">
-                    <input
-                      type="text"
-                      value={searchTerm}
-                      onChange={handleSearchChange}
-                      onKeyDown={handleKeyDown}
-                      onFocus={() => setIsDropdownOpen(true)}
-                      placeholder="Search Customer"
-                      className="block w-[300px] pl-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
-                    />
-                    {isDropdownOpen && searchTerm && (
-                      <ul
-                        ref={dropdownRef}
-                        className="absolute z-10 mt-1 w-[300px] bg-white shadow-lg max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
-                      >
-                        {filteredCustomers.length > 0 ? (
-                          filteredCustomers.map((customer, index) => (
-                            <li
-                              key={customer.id}
-                              onClick={() =>
-                                handleCustomerSelect(customer.id, customer.name)
-                              }
-                              className={`cursor-pointer select-none relative py-2 pl-3 pr-9 ${
-                                index === focusedIndex
-                                  ? "bg-gray-200"
-                                  : "hover:bg-gray-100"
-                              }`}
-                            >
-                              {customer.name}
-                            </li>
-                          ))
-                        ) : (
-                          <li className="cursor-default select-none relative py-2 pl-3 pr-9 text-gray-700">
-                            No results found
-                          </li>
-                        )}
-                      </ul>
-                    )}
-                    <input
-                      type="hidden"
-                      id="customer"
-                      value={selectedCustomerId || ""}
-                      onChange={() => {}}
-                    />
-                  </div>
-                </div>
-                {formItems.map((item, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-12 gap-4 py-4 pl-1 items-center"
-                  >
-                    {/* <select
-                      id={`id-${index}`}
-                      name="id"
-                      value={item.id}
-                      onChange={(e) => handleInputChange(index, e)}
-                      className="col-span-3 pl-4 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
-                    >
-                      <option value="">Select Item</option>
-                      {items.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.name}
-                        </option>
-                      ))}
-                    </select> */}
-
-                    <div className="relative col-span-3">
-                      <input
-                        type="text"
-                        value={itemSearchTerm}
-                        onChange={handleItemSearchChange}
-                        onKeyDown={handleItemKeyDown}
-                        onFocus={() => setIsItemDropdownOpen(true)}
-                        placeholder="Search Item"
-                        className="block w-full pl-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
-                      />
-                      {isItemDropdownOpen && itemSearchTerm && (
-                        <ul
-                          ref={itemDropdownRef}
-                          className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
-                        >
-                          {filteredItems.length > 0 ? (
-                            filteredItems.map((item, idx) => (
-                              <li
-                                key={item.id}
-                                onClick={() =>
-                                  handleItemSelect(index, item.id, item.name)
-                                }
-                                className={`cursor-pointer select-none relative py-2 pl-3 pr-9 ${
-                                  idx === itemFocusedIndex
-                                    ? "bg-gray-200"
-                                    : "hover:bg-gray-100"
-                                }`}
-                              >
-                                {item.name}
-                              </li>
-                            ))
-                          ) : (
-                            <li className="cursor-default select-none relative py-2 pl-3 pr-9 text-gray-700">
-                              No results found
-                            </li>
-                          )}
-                        </ul>
-                      )}
-                    </div>
-
-                    <div className="col-span-2">
-                      <Label></Label>
-                      <span>
-                        {item.price
-                          ? `Rs. ${parseFloat(item.price).toFixed(2)}`
-                          : "-"}
-                      </span>
-                    </div>
-                    <Input
-                      id={`qty-${index}`}
-                      name="qty"
-                      placeholder="Quantity"
-                      value={item.qty}
-                      onChange={(e) => handleInputChange(index, e)}
-                      className="col-span-2"
-                    />
-
-                    <h1
-                      onClick={() => handleDeleteFormItem(index)}
-                      className="text-md flex gap-2 hover:cursor-pointer text-delete-red font-bold col-span-2"
-                    >
-                      <Trash2 />
-                      Remove Item
-                    </h1>
-                  </div>
-                ))}
-                <h1
-                  onClick={addFormItem}
-                  className="text-md flex gap-2 pl-1 hover:cursor-pointer text-choreo-blue font-bold col-span-2"
+                Search Customer
+              </Label>
+              <Input
+                id="customerSearch"
+                type="text"
+                placeholder="Search Customer"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                onKeyDown={handleKeyDown}
+                autoComplete="off"
+              />
+              {isDropdownOpen && (
+                <ul
+                  ref={dropdownRef}
+                  className="absolute z-10 bg-white border border-gray-300 w-full mt-1 max-h-60 overflow-auto shadow-lg"
                 >
-                  <CirclePlus />
-                  Add Item
-                </h1>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button type="submit">Finish and Generate Invoice</Button>
-                  </DialogClose>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+                  {filteredCustomers.map((customer, index) => (
+                    <li
+                      key={customer.id}
+                      className={`px-4 py-2 cursor-pointer ${
+                        index === focusedIndex ? "bg-gray-200" : ""
+                      }`}
+                      onMouseDown={() =>
+                        handleCustomerSelect(customer.id, customer.name)
+                      }
+                    >
+                      {customer.name}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            {formItems.map((formItem, index) => (
+              <div
+                key={index}
+                className="flex flex-col sm:flex-row sm:space-x-4 mb-4"
+              >
+                <div className="mb-4 sm:mb-0 flex-1 relative">
+                  <Label
+                    htmlFor={`itemSearch-${index}`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Item
+                  </Label>
+                  <Input
+                    id={`itemSearch-${index}`}
+                    type="text"
+                    name="itemSearchTerm"
+                    placeholder="Search Item"
+                    value={formItem.itemSearchTerm}
+                    onChange={(e) => handleItemSearchChange(index, e)}
+                    onKeyDown={(e) => handleItemKeyDown(index, e)}
+                    autoComplete="off"
+                  />
+                  {formItem.isItemDropdownOpen && (
+                    <ul className="absolute z-10 bg-white border border-gray-300 w-full mt-1 max-h-60 overflow-auto shadow-lg">
+                      {filteredItems(formItem.itemSearchTerm).map((item, i) => (
+                        <li
+                          key={item.id}
+                          className={`px-4 py-2 cursor-pointer ${
+                            i === formItem.itemFocusedIndex ? "bg-gray-200" : ""
+                          }`}
+                          onMouseDown={() =>
+                            handleItemSelect(index, item.id, item.name)
+                          }
+                        >
+                          {item.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <Label
+                    htmlFor={`price-${index}`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Price
+                  </Label>
+                  <Input
+                    id={`price-${index}`}
+                    type="text"
+                    name="price"
+                    value={formItem.price}
+                    onChange={(e) => handleInputChange(index, e)}
+                    readOnly
+                  />
+                </div>
+                <div className="flex-1">
+                  <Label
+                    htmlFor={`qty-${index}`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Quantity
+                  </Label>
+                  <Input
+                    id={`qty-${index}`}
+                    type="text"
+                    name="qty"
+                    value={formItem.qty}
+                    onChange={(e) => handleInputChange(index, e)}
+                  />
+                </div>
+                <div className="flex items-end">
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    className="sm:ml-2 mt-2 sm:mt-0"
+                    onClick={() => handleDeleteFormItem(index)}
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                </div>
+              </div>
+            ))}
+            <div className="mb-6">
+              <Button type="button" variant="secondary" onClick={addFormItem}>
+                <CirclePlus size={16} className="mr-2" />
+                Add Item
+              </Button>
+            </div>
+            <div className="flex justify-end">
+              <Button type="submit" variant="primary">
+                <FilePlus size={16} className="mr-2" />
+                Create Invoice
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }
