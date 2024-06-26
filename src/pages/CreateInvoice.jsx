@@ -20,8 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import { toast, ToastContainer } from "react-toastify";
 import { Label } from "@radix-ui/react-label";
 import { useNavigate } from "react-router-dom";
-
-import { Trash2, UserRound } from "lucide-react";
+import { Trash2, UserRound, X } from "lucide-react";
 
 export default function CreateNewInvoice() {
   const [items, setItems] = useState([]);
@@ -36,6 +35,9 @@ export default function CreateNewInvoice() {
   const [isItemDropdownOpen, setIsItemDropdownOpen] = useState(false);
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
+
+  const [invoiceDiscountType, setInvoiceDiscountType] = useState("value");
+  const [invoiceDiscountAmount, setInvoiceDiscountAmount] = useState(0);
 
   const navigate = useNavigate();
 
@@ -84,7 +86,15 @@ export default function CreateNewInvoice() {
   };
 
   const handleItemSelect = (item) => {
-    setSelectedItems([...selectedItems, { ...item, qty: 1 }]);
+    setSelectedItems([
+      ...selectedItems,
+      {
+        ...item,
+        qty: 1,
+        discountType: "value",
+        discountAmount: 0,
+      },
+    ]);
     setItemSearchTerm("");
     setIsItemDropdownOpen(false);
   };
@@ -97,15 +107,55 @@ export default function CreateNewInvoice() {
     );
   };
 
+  const handleItemDiscountTypeChange = (id, newType) => {
+    setSelectedItems(
+      selectedItems.map((item) =>
+        item.id === id ? { ...item, discountType: newType } : item
+      )
+    );
+  };
+
+  const handleItemDiscountAmountChange = (id, newAmount) => {
+    setSelectedItems(
+      selectedItems.map((item) =>
+        item.id === id
+          ? { ...item, discountAmount: parseFloat(newAmount) || 0 }
+          : item
+      )
+    );
+  };
+
   const removeItem = (id) => {
     setSelectedItems(selectedItems.filter((item) => item.id !== id));
   };
 
-  const calculateTotal = () => {
+  const calculateItemDiscount = (item) => {
+    if (item.discountType === "value") {
+      return Math.min(item.discountAmount, item.price * item.qty);
+    } else {
+      return item.price * item.qty * (item.discountAmount / 100);
+    }
+  };
+
+  const calculateSubtotal = () => {
     return selectedItems.reduce(
-      (total, item) => total + item.price * item.qty,
+      (total, item) =>
+        total + item.price * item.qty - calculateItemDiscount(item),
       0
     );
+  };
+
+  const calculateInvoiceDiscount = () => {
+    const subtotal = calculateSubtotal();
+    if (invoiceDiscountType === "value") {
+      return Math.min(invoiceDiscountAmount, subtotal);
+    } else {
+      return subtotal * (invoiceDiscountAmount / 100);
+    }
+  };
+
+  const calculateTotal = () => {
+    return calculateSubtotal() - calculateInvoiceDiscount();
   };
 
   const handleSubmit = async (e) => {
@@ -121,7 +171,10 @@ export default function CreateNewInvoice() {
 
     const invoiceData = {
       customer_id: selectedCustomerId,
+      subtotal: calculateSubtotal(),
       total_amount: calculateTotal(),
+      discount_type: invoiceDiscountType,
+      discount_amount: invoiceDiscountAmount,
     };
 
     try {
@@ -139,6 +192,8 @@ export default function CreateNewInvoice() {
         item_id: item.id,
         quantity: item.qty,
         price: item.price,
+        discount_type: item.discountType,
+        discount_amount: item.discountAmount,
       }));
 
       const { error: itemsError } = await supabase
@@ -153,6 +208,8 @@ export default function CreateNewInvoice() {
       setSelectedCustomerId(null);
       setSearchTerm("");
       setSelectedItems([]);
+      setInvoiceDiscountType("value");
+      setInvoiceDiscountAmount(0);
 
       setTimeout(() => {
         navigate(`/view-invoices/${invoiceId}`);
@@ -176,7 +233,7 @@ export default function CreateNewInvoice() {
   return (
     <>
       <ToastContainer />
-      <div className="pt-20 pl-40">
+      <div className="pt-20 pl-[60px]">
         <div className="flex items-center space-x-5">
           <Input
             type="text"
@@ -201,23 +258,27 @@ export default function CreateNewInvoice() {
             ))}
           </ul>
         )}
-        <div className="flex mt-5">
-          <div className="flex-1">
+        <div className="flex  mt-5">
+          <div className="flex-1	 ">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Item Name</TableHead>
+                  <TableHead>Name</TableHead>
                   <TableHead>Price</TableHead>
                   <TableHead>Qty</TableHead>
+                  <TableHead>Discount Type</TableHead>
+                  <TableHead>Discount Amount</TableHead>
                   <TableHead>Total</TableHead>
-                  <TableHead>Action</TableHead>
+                  {/* <TableHead>Action</TableHead> */}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {selectedItems.map((item) => (
                   <TableRow key={item.id}>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell>{item.price} LKR</TableCell>
+                    <TableCell className="w-[200px]">{item.name}</TableCell>
+                    <TableCell className="w-[100px] font-bold">
+                      {item.price}
+                    </TableCell>
                     <TableCell>
                       <Input
                         className="w-14 h-8 rounded-sm"
@@ -227,15 +288,44 @@ export default function CreateNewInvoice() {
                         }
                       />
                     </TableCell>
-                    <TableCell>{item.price * item.qty} LKR</TableCell>
+                    <TableCell>
+                      <select
+                        value={item.discountType}
+                        onChange={(e) =>
+                          handleItemDiscountTypeChange(item.id, e.target.value)
+                        }
+                      >
+                        <option value="value">Value</option>
+                        <option value="percentage">Percentage</option>
+                      </select>
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        className="w-14 h-8 rounded-sm"
+                        value={item.discountAmount}
+                        onChange={(e) =>
+                          handleItemDiscountAmountChange(
+                            item.id,
+                            e.target.value
+                          )
+                        }
+                      />
+                    </TableCell>
+                    <TableCell className="w-[100px] font-bold">
+                      {item.price * item.qty - calculateItemDiscount(item)}
+                    </TableCell>
                     <TableCell>
                       <Button
                         onClick={() => removeItem(item.id)}
                         variant="destructive"
-                        className="h-8.5"
+                        className="h-8"
                       >
                         Remove
                       </Button>
+                      {/* <Trash2
+                        onClick={() => removeItem(item.id)}
+                        className="text-delete-red font-bold hover:cursor-pointer"
+                      /> */}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -243,8 +333,8 @@ export default function CreateNewInvoice() {
             </Table>
           </div>
 
-          <div className="flex-1">
-            <Card className="w-[450px]">
+          <div className="flex-none pr-8">
+            <Card className="-mt-5 w-[350px]">
               <CardHeader>
                 <div className="flex w-full max-w-sm items-center space-x-2">
                   <Button
@@ -282,7 +372,58 @@ export default function CreateNewInvoice() {
                 <div className="grid w-full items-center gap-4">
                   <div className="flex">
                     <h1 className="flex-1">Sub Total</h1>
-                    <h1 className="flex-1">{calculateTotal()} LKR</h1>
+                    <h1 className="flex-1">{calculateSubtotal()} LKR</h1>
+                  </div>
+                  <Separator />
+                  <div className="flex flex-col gap-2">
+                    <Label>Invoice Discount Type</Label>
+                    <div className="flex gap-4">
+                      <Label className="flex items-center gap-2">
+                        <Input
+                          type="radio"
+                          name="invoiceDiscountType"
+                          value="value"
+                          checked={invoiceDiscountType === "value"}
+                          onChange={(e) =>
+                            setInvoiceDiscountType(e.target.value)
+                          }
+                        />
+                        Value
+                      </Label>
+                      <Label className="flex items-center gap-2">
+                        <Input
+                          type="radio"
+                          name="invoiceDiscountType"
+                          value="percentage"
+                          checked={invoiceDiscountType === "percentage"}
+                          onChange={(e) =>
+                            setInvoiceDiscountType(e.target.value)
+                          }
+                        />
+                        Percentage
+                      </Label>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Label>Invoice Discount Amount</Label>
+                    <Input
+                      type="number"
+                      value={invoiceDiscountAmount}
+                      onChange={(e) =>
+                        setInvoiceDiscountAmount(
+                          parseFloat(e.target.value) || 0
+                        )
+                      }
+                      placeholder={
+                        invoiceDiscountType === "value"
+                          ? "Enter amount"
+                          : "Enter percentage"
+                      }
+                    />
+                  </div>
+                  <div className="flex">
+                    <h1 className="flex-1">Invoice Discount</h1>
+                    <h1 className="flex-1">{calculateInvoiceDiscount()} LKR</h1>
                   </div>
                   <Separator />
                   <div className="flex">
