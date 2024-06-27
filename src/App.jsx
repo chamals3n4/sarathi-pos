@@ -18,6 +18,7 @@ import AsgardeoAuth from "./components/AsgardeoAuth";
 import CreateInvoice from "./pages/Invoice";
 import CreateNewInvoice from "./pages/CreateInvoice";
 import InvoiceSize from "./pages/InvoiceSize";
+import ViewSingleInvoice from "./pages/ViewSingleInvoice";
 
 export default function App() {
   return (
@@ -26,8 +27,8 @@ export default function App() {
         <Route>
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<SelectRole />} />
-            <Route path="/admin" element={<NavMenu role={"admin"} />} />
-            <Route path="/regular" element={<NavMenu role={"regular"} />} />
+            <Route path="/admin" element={<NavMenu />} />
+            <Route path="/regular" element={<NavMenu />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/items" element={<Items />} />
             <Route path="/categories" element={<Categories />} />
@@ -35,15 +36,14 @@ export default function App() {
             <Route path="/chamalsena" element={<Invoice />} />
             <Route path="/invoice" element={<CreateNewInvoice />} />
             <Route path="/view-invoices" element={<ViewAllInvoice />} />
-
             <Route path="/invoice-size" element={<InvoiceSize />} />
-            <Route
+            {/* <Route
               path="/view-invoices/:id"
               element={<SingleGeneratedInvoice />}
-            />
+            /> */}
+            <Route path="/view-invoices/:id" element={<ViewSingleInvoice />} />
           </Route>
           <Route path="/login" element={<AuthComponent />} />
-          {/* <Route path="/login" element={<AsgardeoAuth />} /> */}
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

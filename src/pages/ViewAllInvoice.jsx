@@ -94,6 +94,8 @@ export default function ViewAllInvoice() {
                 <TableHead className="text-lg font-medium">
                   Customer Name
                 </TableHead>
+                <TableHead className="text-lg font-medium">Sub Total</TableHead>
+                <TableHead className="text-lg font-medium">Discount</TableHead>
                 <TableHead className="text-lg font-medium">
                   Total Amount
                 </TableHead>
@@ -110,6 +112,12 @@ export default function ViewAllInvoice() {
                   >
                     <TableCell className="text-lg">
                       {invoice.customers.name}
+                    </TableCell>
+                    <TableCell className="text-lg">
+                      {invoice.subtotal}
+                    </TableCell>
+                    <TableCell className="text-lg">
+                      {invoice.discount_amount}
                     </TableCell>
                     <TableCell className="text-lg">
                       {invoice.total_amount}

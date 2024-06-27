@@ -19,8 +19,10 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { toast, ToastContainer } from "react-toastify";
 import { Label } from "@radix-ui/react-label";
+import Spinner from "@/components/Spinner";
+
 import { useNavigate } from "react-router-dom";
-import { Trash2, UserRound, X } from "lucide-react";
+import { Trash2, User, UserRound, X } from "lucide-react";
 import MenuBar from "@/components/MenuBar";
 
 export default function CreateNewInvoice() {
@@ -179,6 +181,23 @@ export default function CreateNewInvoice() {
     };
 
     try {
+      // Check and update item quantities before creating the invoice
+      for (const selectedItem of selectedItems) {
+        const { data: currentItemData, error: fetchError } = await supabase
+          .from("items")
+          .select("qty")
+          .eq("id", selectedItem.id)
+          .single();
+
+        if (fetchError) throw fetchError;
+
+        const newQty = currentItemData.qty - selectedItem.qty;
+        if (newQty < 0) {
+          toast.error(`Not enough quantity for item: ${selectedItem.name}`);
+          return;
+        }
+      }
+
       const { data, error } = await supabase
         .from("invoices")
         .insert([invoiceData])
@@ -202,6 +221,34 @@ export default function CreateNewInvoice() {
         .insert(invoiceItemsData);
 
       if (itemsError) throw itemsError;
+
+      // Update item quantities
+      for (const item of selectedItems) {
+        const { data: currentItemData, error: fetchError } = await supabase
+          .from("items")
+          .select("qty")
+          .eq("id", item.id)
+          .single();
+
+        if (fetchError) throw fetchError;
+
+        const newQty = currentItemData.qty - item.qty;
+        if (newQty < 0) {
+          toast.error(`Not enough quantity for item: ${item.name}`);
+          return;
+        }
+
+        const { error: updateError } = await supabase
+          .from("items")
+          .update({ qty: newQty })
+          .eq("id", item.id);
+
+        if (updateError) throw updateError;
+
+        if (newQty === 0) {
+          toast.error(`Item ${item.name} is now out of stock.`);
+        }
+      }
 
       toast.success("Invoice created successfully");
 
@@ -229,221 +276,229 @@ export default function CreateNewInvoice() {
     item.name.toLowerCase().includes(itemSearchTerm.toLowerCase())
   );
 
-  if (loading) return <div>Loading...</div>;
-
   return (
     <>
       <ToastContainer />
       <MenuBar />
-      <div className="pt-8 pl-[60px]">
-        <div className="flex items-center space-x-5">
-          <Input
-            type="text"
-            className="w-[450px] my-3"
-            placeholder="Start typing item name"
-            value={itemSearchTerm}
-            onChange={handleItemSearchChange}
-          />
-        </div>
-        {isItemDropdownOpen && (
-          <ul className="absolute z-10 bg-white border border-gray-300 w-[400px] mt-1 max-h-60 overflow-auto shadow-lg">
-            {filteredItems.map((item, index) => (
-              <li
-                key={item.id}
-                className={`px-4 py-2 cursor-pointer ${
-                  index === itemFocusedIndex ? "bg-gray-200" : ""
-                }`}
-                onClick={() => handleItemSelect(item)}
-              >
-                {item.name}
-              </li>
-            ))}
-          </ul>
-        )}
-        <div className="flex  mt-5">
-          <div className="flex-1	 ">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Qty</TableHead>
-                  <TableHead>Discount Type</TableHead>
-                  <TableHead>Discount Amount</TableHead>
-                  <TableHead>Total</TableHead>
-                  {/* <TableHead>Action</TableHead> */}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {selectedItems.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="w-[200px]">{item.name}</TableCell>
-                    <TableCell className="w-[100px] font-bold">
-                      {item.price}
-                    </TableCell>
-                    <TableCell>
-                      <Input
-                        className="w-14 h-8 rounded-sm"
-                        value={item.qty}
-                        onChange={(e) =>
-                          handleQuantityChange(item.id, e.target.value)
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <select
-                        value={item.discountType}
-                        onChange={(e) =>
-                          handleItemDiscountTypeChange(item.id, e.target.value)
-                        }
-                      >
-                        <option value="value">Value</option>
-                        <option value="percentage">Percentage</option>
-                      </select>
-                    </TableCell>
-                    <TableCell>
-                      <Input
-                        className="w-14 h-8 rounded-sm"
-                        value={item.discountAmount}
-                        onChange={(e) =>
-                          handleItemDiscountAmountChange(
-                            item.id,
-                            e.target.value
-                          )
-                        }
-                      />
-                    </TableCell>
-                    <TableCell className="w-[100px] font-bold">
-                      {item.price * item.qty - calculateItemDiscount(item)}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        onClick={() => removeItem(item.id)}
-                        variant="destructive"
-                        className="h-8"
-                      >
-                        Remove
-                      </Button>
-                      {/* <Trash2
+      {loading ? (
+        <Spinner loading={loading} />
+      ) : (
+        <div className="pt-8 pl-[60px]">
+          <div className="flex items-center space-x-5">
+            <Input
+              type="text"
+              className="w-[450px] my-3"
+              placeholder="Start typing item name"
+              value={itemSearchTerm}
+              onChange={handleItemSearchChange}
+            />
+          </div>
+          {isItemDropdownOpen && (
+            <ul className="absolute z-10 bg-white border border-gray-300 w-[400px] mt-1 max-h-60 overflow-auto shadow-lg">
+              {filteredItems.map((item, index) => (
+                <li
+                  key={item.id}
+                  className={`px-4 py-2 cursor-pointer ${
+                    index === itemFocusedIndex ? "bg-gray-200" : ""
+                  }`}
+                  onClick={() => handleItemSelect(item)}
+                >
+                  {item.name}
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="flex  mt-5">
+            <div className="flex-1	 ">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Qty</TableHead>
+                    <TableHead>Discount Type</TableHead>
+                    <TableHead>Discount Amount</TableHead>
+                    <TableHead>Total</TableHead>
+                    {/* <TableHead>Action</TableHead> */}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {selectedItems.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="w-[200px]">{item.name}</TableCell>
+                      <TableCell className="w-[100px] font-bold">
+                        {item.price}
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          className="w-14 h-8 rounded-sm"
+                          value={item.qty}
+                          onChange={(e) =>
+                            handleQuantityChange(item.id, e.target.value)
+                          }
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <select
+                          value={item.discountType}
+                          onChange={(e) =>
+                            handleItemDiscountTypeChange(
+                              item.id,
+                              e.target.value
+                            )
+                          }
+                        >
+                          <option value="value">Value</option>
+                          <option value="percentage">Percentage</option>
+                        </select>
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          className="w-14 h-8 rounded-sm"
+                          value={item.discountAmount}
+                          onChange={(e) =>
+                            handleItemDiscountAmountChange(
+                              item.id,
+                              e.target.value
+                            )
+                          }
+                        />
+                      </TableCell>
+                      <TableCell className="w-[100px] font-bold">
+                        {item.price * item.qty - calculateItemDiscount(item)}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => removeItem(item.id)}
+                          variant="destructive"
+                          className="h-8"
+                        >
+                          Remove
+                        </Button>
+                        {/* <Trash2
                         onClick={() => removeItem(item.id)}
                         className="text-delete-red font-bold hover:cursor-pointer"
                       /> */}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
 
-          <div className="flex-none pr-8">
-            <Card className="-mt-8 w-[350px]">
-              <CardHeader>
-                <div className="flex w-full max-w-sm items-center space-x-2">
-                  <Button
-                    className="bg-pos-grey hover:bg-pos-grey hover:cursor-auto"
-                    type="button"
-                  >
-                    <UserRound />
-                  </Button>
-                  <Input
-                    type="text"
-                    placeholder="Search Customer"
-                    value={searchTerm}
-                    onChange={handleCustomerSearchChange}
-                  />
-                </div>
-                {isCustomerDropdownOpen && (
-                  <ul className="absolute z-10 bg-white border border-gray-300 w-[calc(100%-5.5rem)] mt-1 max-h-60 overflow-auto shadow-lg">
-                    {filteredCustomers.map((customer, index) => (
-                      <li
-                        key={customer.id}
-                        className={`px-4 py-2 cursor-pointer ${
-                          index === focusedIndex ? "bg-gray-200" : ""
-                        }`}
-                        onClick={() =>
-                          handleCustomerSelect(customer.id, customer.name)
-                        }
-                      >
-                        {customer.name}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </CardHeader>
-              <CardContent>
-                <div className="grid w-full items-center gap-4">
-                  <div className="flex">
-                    <h1 className="flex-1">Sub Total</h1>
-                    <h1 className="flex-1">{calculateSubtotal()} LKR</h1>
-                  </div>
-                  <Separator />
-                  <div className="flex flex-col gap-2">
-                    <Label>Invoice Discount Type</Label>
-                    <div className="flex gap-4">
-                      <Label className="flex items-center gap-2">
-                        <Input
-                          type="radio"
-                          name="invoiceDiscountType"
-                          value="value"
-                          checked={invoiceDiscountType === "value"}
-                          onChange={(e) =>
-                            setInvoiceDiscountType(e.target.value)
-                          }
-                        />
-                        Value
-                      </Label>
-                      <Label className="flex items-center gap-2">
-                        <Input
-                          type="radio"
-                          name="invoiceDiscountType"
-                          value="percentage"
-                          checked={invoiceDiscountType === "percentage"}
-                          onChange={(e) =>
-                            setInvoiceDiscountType(e.target.value)
-                          }
-                        />
-                        Percentage
-                      </Label>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <Label>Invoice Discount Amount</Label>
+            <div className="flex-none pr-8">
+              <Card className="-mt-8 w-[350px]">
+                <CardHeader>
+                  <div className="flex w-full max-w-sm items-center space-x-2">
+                    <Button
+                      className="bg-choreo-blue hover:bg-choreo-blue hover:cursor-auto"
+                      type="button"
+                    >
+                      <User />
+                    </Button>
+
                     <Input
-                      type="number"
-                      value={invoiceDiscountAmount}
-                      onChange={(e) =>
-                        setInvoiceDiscountAmount(
-                          parseFloat(e.target.value) || 0
-                        )
-                      }
-                      placeholder={
-                        invoiceDiscountType === "value"
-                          ? "Enter amount"
-                          : "Enter percentage"
-                      }
+                      type="text"
+                      placeholder="Search Customer"
+                      value={searchTerm}
+                      onChange={handleCustomerSearchChange}
                     />
                   </div>
-                  <div className="flex">
-                    <h1 className="flex-1">Invoice Discount</h1>
-                    <h1 className="flex-1">{calculateInvoiceDiscount()} LKR</h1>
+                  {isCustomerDropdownOpen && (
+                    <ul className="absolute z-10 bg-white border border-gray-300 w-[calc(100%-5.5rem)] mt-1 max-h-60 overflow-auto shadow-lg">
+                      {filteredCustomers.map((customer, index) => (
+                        <li
+                          key={customer.id}
+                          className={`px-4 py-2 cursor-pointer ${
+                            index === focusedIndex ? "bg-gray-200" : ""
+                          }`}
+                          onClick={() =>
+                            handleCustomerSelect(customer.id, customer.name)
+                          }
+                        >
+                          {customer.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </CardHeader>
+                <CardContent>
+                  <div className="grid w-full items-center gap-4">
+                    <div className="flex">
+                      <h1 className="flex-1">Sub Total</h1>
+                      <h1 className="flex-1">{calculateSubtotal()} LKR</h1>
+                    </div>
+                    <Separator />
+                    <div className="flex flex-col gap-2">
+                      <Label>Invoice Discount Type</Label>
+                      <div className="flex gap-4">
+                        <Label className="flex items-center gap-2">
+                          <Input
+                            type="radio"
+                            name="invoiceDiscountType"
+                            value="value"
+                            checked={invoiceDiscountType === "value"}
+                            onChange={(e) =>
+                              setInvoiceDiscountType(e.target.value)
+                            }
+                          />
+                          Value
+                        </Label>
+                        <Label className="flex items-center gap-2">
+                          <Input
+                            type="radio"
+                            name="invoiceDiscountType"
+                            value="percentage"
+                            checked={invoiceDiscountType === "percentage"}
+                            onChange={(e) =>
+                              setInvoiceDiscountType(e.target.value)
+                            }
+                          />
+                          Percentage
+                        </Label>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Label>Invoice Discount Amount</Label>
+                      <Input
+                        type="number"
+                        value={invoiceDiscountAmount}
+                        onChange={(e) =>
+                          setInvoiceDiscountAmount(
+                            parseFloat(e.target.value) || 0
+                          )
+                        }
+                        placeholder={
+                          invoiceDiscountType === "value"
+                            ? "Enter amount"
+                            : "Enter percentage"
+                        }
+                      />
+                    </div>
+                    <div className="flex">
+                      <h1 className="flex-1">Invoice Discount</h1>
+                      <h1 className="flex-1">
+                        {calculateInvoiceDiscount()} LKR
+                      </h1>
+                    </div>
+                    <Separator />
+                    <div className="flex">
+                      <h1 className="flex-1">Total</h1>
+                      <h1 className="flex-1">{calculateTotal()} LKR</h1>
+                    </div>
                   </div>
-                  <Separator />
-                  <div className="flex">
-                    <h1 className="flex-1">Total</h1>
-                    <h1 className="flex-1">{calculateTotal()} LKR</h1>
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline">Cancel</Button>
-                <Button className="bg-choreo-blue" onClick={handleSubmit}>
-                  Finish & Create
-                </Button>
-              </CardFooter>
-            </Card>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <Button variant="outline">Cancel</Button>
+                  <Button className="bg-choreo-blue" onClick={handleSubmit}>
+                    Finish & Create
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

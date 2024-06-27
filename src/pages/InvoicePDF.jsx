@@ -139,6 +139,7 @@ export default function InvoicePDF() {
                 <TableHead className="text-lg font-medium">Item Name</TableHead>
                 <TableHead className="text-lg font-medium">Qty</TableHead>
                 <TableHead className="text-lg font-medium">Rate</TableHead>
+                <TableHead className="text-lg font-medium">Discount</TableHead>
                 <TableHead className="text-lg font-medium">Total</TableHead>
               </TableRow>
             </TableHeader>
@@ -151,6 +152,12 @@ export default function InvoicePDF() {
                     <TableCell className="text-lg">{item.price}</TableCell>
                     <TableCell className="text-lg">
                       {item.quantity * item.price}
+                    </TableCell>
+                    <TableCell className="text-lg">
+                      {invoice.discount_amount}
+                    </TableCell>
+                    <TableCell className="text-lg">
+                      {invoice.total_amount}
                     </TableCell>
                   </TableRow>
                 ))
