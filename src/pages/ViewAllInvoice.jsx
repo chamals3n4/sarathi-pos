@@ -75,8 +75,8 @@ export default function ViewAllInvoice() {
 
   return (
     <>
+      <MenuBar />
       <div className="overflow-hidden bg-white py-24 pr-36 pl-36 mb-10 sm:py-16">
-        <MenuBar />
         <div className="pb-10 flex items-center space-x-4">
           <div className="text-white text-2xl w-[50px] h-[50px] bg-choreo-blue rounded-[10px] flex items-center justify-center">
             <ListOrdered className="w-[25px] h-[25px]" />

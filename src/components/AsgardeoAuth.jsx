@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useAuthContext } from "@asgardeo/auth-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 

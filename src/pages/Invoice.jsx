@@ -340,7 +340,7 @@ export default function CreateInvoice() {
   return (
     <>
       <MenuBar />
-      <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto py-4 px-4 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-semibold mb-6">Create Invoice</h1>
         <div className="pl-20 pr-20">
           <form onSubmit={handleSubmit}>

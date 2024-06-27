@@ -21,6 +21,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { Label } from "@radix-ui/react-label";
 import { useNavigate } from "react-router-dom";
 import { Trash2, UserRound, X } from "lucide-react";
+import MenuBar from "@/components/MenuBar";
 
 export default function CreateNewInvoice() {
   const [items, setItems] = useState([]);
@@ -233,7 +234,8 @@ export default function CreateNewInvoice() {
   return (
     <>
       <ToastContainer />
-      <div className="pt-20 pl-[60px]">
+      <MenuBar />
+      <div className="pt-8 pl-[60px]">
         <div className="flex items-center space-x-5">
           <Input
             type="text"
@@ -334,7 +336,7 @@ export default function CreateNewInvoice() {
           </div>
 
           <div className="flex-none pr-8">
-            <Card className="-mt-5 w-[350px]">
+            <Card className="-mt-8 w-[350px]">
               <CardHeader>
                 <div className="flex w-full max-w-sm items-center space-x-2">
                   <Button

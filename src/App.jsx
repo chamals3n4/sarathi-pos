@@ -17,6 +17,7 @@ import SelectRole from "./pages/SelectRole";
 import AsgardeoAuth from "./components/AsgardeoAuth";
 import CreateInvoice from "./pages/Invoice";
 import CreateNewInvoice from "./pages/CreateInvoice";
+import InvoiceSize from "./pages/InvoiceSize";
 
 export default function App() {
   return (
@@ -34,6 +35,8 @@ export default function App() {
             <Route path="/chamalsena" element={<Invoice />} />
             <Route path="/invoice" element={<CreateNewInvoice />} />
             <Route path="/view-invoices" element={<ViewAllInvoice />} />
+
+            <Route path="/invoice-size" element={<InvoiceSize />} />
             <Route
               path="/view-invoices/:id"
               element={<SingleGeneratedInvoice />}

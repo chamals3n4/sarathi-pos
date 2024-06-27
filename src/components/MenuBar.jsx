@@ -1,48 +1,85 @@
-import React from "react";
+/**
+ * v0 by Vercel.
+ * @see https://v0.dev/t/TXJelOHbsOu
+ * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
+ */
 import { Link } from "react-router-dom";
 
 export default function MenuBar() {
   return (
-    <>
-      <header className="flex flex-col items-center justify-between max-w-full md:max-w-6xl px-2 md:px-6 py-0.5 mx-auto md:flex-row">
-        <Link to="/" className="text-indigo-900 z-10 active">
-          {/* <img
-            src="https://www.svgrepo.com/show/489282/brand.svg"
-            className="w-24 py-8 md:py-0 g-image"
-          /> */}
+    <header className="bg-choreo-blue text-primary-foreground shadow">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link to="/" className="flex items-center gap-2" prefetch={false}>
+          <span className="text-2xl font-semibold">Sarathi Book Shop</span>
         </Link>
-        <nav className="z-10">
-          <ul className="flex flex-row items-center px-6 py-3 mb-12 text-indigo-100 bg-sarathi-grey rounded-lg">
-            <li className="font-bold pr-8">
-              <Link to="/">Home Page</Link>
-            </li>
-            <li className="font-bold pr-8">
-              <Link to="/customers">Customers</Link>
-            </li>
-            <li className="font-bold pr-8">
-              <Link to="/items">Items</Link>
-            </li>
-            <li className="font-bold pr-8">
-              <Link to="/categories">Categories</Link>
-            </li>
-            <li className="font-bold pr-8">
-              <Link to="/invoice" className="ml-2">
-                Create Invoice
-              </Link>
-            </li>
-            <li className="font-bold pr-8">
-              <Link to="/view-invoices" className="ml-2">
-                View All Invoices
-              </Link>
-            </li>
-            <li className="font-bold pr-8">
-              <Link to="/sales" className="ml-2">
-                Sales
-              </Link>
-            </li>
-          </ul>
+        <nav className="flex items-center gap-4">
+          <Link
+            to="/invoice"
+            className="rounded-md px-3 py-2 text-lg font-medium  focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+            prefetch={true}
+          >
+            Create Invoice
+          </Link>
+          <Link
+            to="/view-invoices"
+            className="rounded-md px-3 py-2 text-lg font-medium  focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+            prefetch={false}
+          >
+            View All Invoice
+          </Link>
+          <Link
+            to="/items"
+            className="rounded-md px-3 py-2 text-lg font-medium  focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+            prefetch={false}
+          >
+            Items
+          </Link>
+          <Link
+            to="/categories"
+            className="rounded-md px-3 py-2 text-lg font-medium  focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+            prefetch={false}
+          >
+            Categories
+          </Link>
+          <Link
+            to="/customers"
+            className="rounded-md px-3 py-2 text-lg font-medium  focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+            prefetch={false}
+          >
+            Customers
+          </Link>
+          <Link
+            to="/sales"
+            className="rounded-md px-3 py-2 text-lg font-medium  focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+            prefetch={false}
+          >
+            Sales
+          </Link>
         </nav>
-      </header>
-    </>
+      </div>
+    </header>
   );
 }
+
+function ReceiptIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" />
+      <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+      <path d="M12 17.5v-11" />
+    </svg>
+  );
+}
+
+// 711010108693

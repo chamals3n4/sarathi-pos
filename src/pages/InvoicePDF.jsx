@@ -78,9 +78,14 @@ export default function InvoicePDF() {
   }
 
   return (
-    <div className="pt-16 pr-24 pl-24 pb-24">
-      <style>
-        {`
+    <>
+      <div className="no-print">
+        <MenuBar />
+      </div>
+
+      <div className="pt-16 pr-24 pl-24 pb-24">
+        <style>
+          {`
           @media print {
             body {
               width: 80mm;
@@ -111,72 +116,71 @@ export default function InvoicePDF() {
             }
           }
         `}
-      </style>
+        </style>
 
-      <div className="no-print">
-        <MenuBar />
-      </div>
-
-      <div id="invoice-content">
-        <div className="mx-auto max-w-2xl pb-10 pl-4 lg:mx-0">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Sarathi Book Shop
-          </h2>
-          <p className="mt-5 text-base leading-6 text-gray-600">
-            Customer Name: {invoice.customers.name} <br className="mb-0.5" />
-            Phone Number: {invoice.customers.phone} <br className="mb-0.5" />
-            Address: {invoice.customers.address}
-          </p>
-        </div>
-        <Table>
-          <TableCaption className="text-sm">Thank You, Come Again</TableCaption>
-          <TableCaption>Contact us - 0717110160</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-lg font-medium">Item Name</TableHead>
-              <TableHead className="text-lg font-medium">Qty</TableHead>
-              <TableHead className="text-lg font-medium">Rate</TableHead>
-              <TableHead className="text-lg font-medium">Total</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {invoice.items && invoice.items.length > 0 ? (
-              invoice.items.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell className="text-lg">{item.items.name}</TableCell>
-                  <TableCell className="text-lg">{item.quantity}</TableCell>
-                  <TableCell className="text-lg">{item.price}</TableCell>
-                  <TableCell className="text-lg">
-                    {item.quantity * item.price}
+        <div id="invoice-content">
+          <div className="mx-auto max-w-2xl pb-10 pl-4 lg:mx-0">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Sarathi Book Shop
+            </h2>
+            <p className="mt-5 text-base leading-6 text-gray-600">
+              Customer Name: {invoice.customers.name} <br className="mb-0.5" />
+              Phone Number: {invoice.customers.phone} <br className="mb-0.5" />
+              Address: {invoice.customers.address}
+            </p>
+          </div>
+          <Table>
+            <TableCaption className="text-sm">
+              Thank You, Come Again
+            </TableCaption>
+            <TableCaption>Contact us - 0717110160</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-lg font-medium">Item Name</TableHead>
+                <TableHead className="text-lg font-medium">Qty</TableHead>
+                <TableHead className="text-lg font-medium">Rate</TableHead>
+                <TableHead className="text-lg font-medium">Total</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {invoice.items && invoice.items.length > 0 ? (
+                invoice.items.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="text-lg">{item.items.name}</TableCell>
+                    <TableCell className="text-lg">{item.quantity}</TableCell>
+                    <TableCell className="text-lg">{item.price}</TableCell>
+                    <TableCell className="text-lg">
+                      {item.quantity * item.price}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center">
+                    No items available
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
+              )}
+            </TableBody>
+            <TableFooter>
               <TableRow>
-                <TableCell colSpan={4} className="text-center">
-                  No items available
+                <TableCell colSpan={3}>Total</TableCell>
+                <TableCell className="text-lg font-bold">
+                  {invoice.items
+                    ? invoice.items.reduce(
+                        (sum, item) => sum + item.quantity * item.price,
+                        0
+                      )
+                    : 0}
                 </TableCell>
               </TableRow>
-            )}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TableCell colSpan={3}>Total</TableCell>
-              <TableCell className="text-lg font-bold">
-                {invoice.items
-                  ? invoice.items.reduce(
-                      (sum, item) => sum + item.quantity * item.price,
-                      0
-                    )
-                  : 0}
-              </TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
+            </TableFooter>
+          </Table>
+        </div>
+        <div className="flex justify-end mt-5 no-print">
+          <Button onClick={handlePrint}>Print as PDF</Button>
+        </div>
       </div>
-      <div className="flex justify-end mt-5 no-print">
-        <Button onClick={handlePrint}>Print as PDF</Button>
-      </div>
-    </div>
+    </>
   );
 }
