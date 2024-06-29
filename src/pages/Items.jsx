@@ -275,7 +275,7 @@ export default function Customers() {
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
-                            className="bg-update-green h-8"
+                            className="bg-update-green h-8 rounded-sm"
                             onClick={() => {
                               setCurrentItem(item);
                               setItemName(item.name);

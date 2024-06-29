@@ -101,36 +101,49 @@ export default function ViewSingleInvoice() {
     doc.text(`Customer: CASH CUSTOMER`, 5, y);
     y += 6; // Reduced spacing before table
 
+    const tableData = invoiceItems.map((item) => [
+      item.quantity,
+      item.items.name,
+      item.price,
+      item.discount_type === "value"
+        ? item.discount_amount
+        : `${item.discount_amount}%`,
+      calculateItemTotal(item),
+    ]);
+
     doc.autoTable({
       startY: y,
       head: [["QTY", "DESC", "RATE", "DISC", "AMOUNT"]],
-      body: [["5", "Atlas Chooty T", "25", "10", "115", "200.00"]],
+      body: tableData,
       theme: "grid",
       headStyles: { fillColor: [255, 255, 255], textColor: 0, fontSize: 6 },
       bodyStyles: { fontSize: 6 },
       styles: { cellPadding: 0.5, minCellHeight: 4, halign: "center" },
       margin: { left: 10, right: 10 }, // Center the table
       columnStyles: {
-        0: { cellWidth: 7 }, // Description
-        2: { cellWidth: 7 }, // Quantity
-        3: { cellWidth: 10 }, // Rate
-        4: { cellWidth: 7 }, // Discount
-        5: { cellWidth: 13 }, // Amount
+        0: { cellWidth: 7 }, // Quantity
+        1: { cellWidth: 30 }, // Description
+        2: { cellWidth: 10 }, // Rate
+        3: { cellWidth: 7 }, // Discount
+        4: { cellWidth: 13 }, // Amount
       },
     });
 
     y = doc.lastAutoTable.finalY + 5; // Reduced spacing after table
     doc.setFontSize(8); // Keep smaller font size for summary
     const summaryTexts = [
-      "SUB TOTAL: 200.00",
-      "DISCOUNT: 0.00",
-      "NET TOTAL: 200.00",
-      "PAID AMOUNT: 200.00",
-      "BALANCE: 0.00",
-      "DUE AMOUNT: 0.00",
-      "Total Discount: 0.00",
-      "No of Items: 1",
-      "No of Pcs: 2.00",
+      `SUB TOTAL: ${invoice.subtotal} LKR`,
+      `DISCOUNT: ${invoice.subtotal - invoice.total_amount} LKR`,
+      `NET TOTAL: ${invoice.total_amount} LKR`,
+      `PAID AMOUNT: ${invoice.total_amount} LKR`,
+      `BALANCE: 0.00 LKR`,
+      `DUE AMOUNT: 0.00 LKR`,
+      `Total Discount: ${invoice.subtotal - invoice.total_amount} LKR`,
+      `No of Items: ${invoiceItems.length}`,
+      `No of Pcs: ${invoiceItems.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+      )}`,
     ];
 
     summaryTexts.forEach((text) => {
@@ -147,9 +160,9 @@ export default function ViewSingleInvoice() {
 
     // Update the document format with the new height
     const pages = doc.internal.pages;
-    pages[1].splice(0, 1, {
-      id: pages[1][0].id,
-      width: pages[1][0].width,
+    pages.splice(0, 1, {
+      id: pages.id,
+      width: pages.width,
       height: finalHeight,
     });
 
@@ -167,7 +180,9 @@ export default function ViewSingleInvoice() {
       <div className="p-8">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">Invoice #{invoice.id}</h1>
-          <Button onClick={handleDownloadPDF}>Download Invoice</Button>
+          <Button className="bg-delete-red" onClick={handleDownloadPDF}>
+            Download Invoice
+          </Button>
         </div>
 
         <Card className="mb-6">
