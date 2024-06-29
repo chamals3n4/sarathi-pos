@@ -74,82 +74,87 @@ export default function ViewSingleInvoice() {
     return item.price * item.quantity - calculateItemDiscount(item);
   };
 
-  const generatePDF = () => {
+  const handleDownloadPDF = () => {
     const doc = new jsPDF({
+      orientation: "portrait",
       unit: "mm",
-      format: [30, 297], // 30mm width, adjust height as needed
+      format: [80, 110], // Initial format, will be adjusted later
     });
+    let y = 5; // Reduced initial Y position
+    doc.setFontSize(12);
+    doc.text("Sarathi Book Shop", 40, y, null, null, "center");
+    y += 5; // Reduced spacing
+    doc.setFontSize(10);
+    doc.text("Near School,Wellawa.", 40, y, null, null, "center");
+    y += 4; // Reduced spacing
+    doc.text("Tel: 037-2235377", 40, y, null, null, "center");
+    y += 6; // Reduced spacing
+    doc.setFontSize(8); // Reduced font size for details
+    doc.text(`Invoice No: 000001`, 5, y);
+    y += 4;
+    doc.text(`Date: 2024-02-23`, 5, y);
+    y += 4;
+    doc.text(`Time: 22:53:57 PM`, 5, y);
+    y += 4;
+    // doc.text(`User: ADMIN`, 5, y);
+    // y += 4;
+    doc.text(`Customer: CASH CUSTOMER`, 5, y);
+    y += 6; // Reduced spacing before table
 
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 1; // 1mm margin on each side
-    const contentWidth = pageWidth - 2 * margin;
-
-    // Set font size
-    doc.setFontSize(6);
-
-    // Center-aligned text function
-    const centerText = (text, y) => {
-      const textWidth =
-        (doc.getStringUnitWidth(text) * doc.internal.getFontSize()) /
-        doc.internal.scaleFactor;
-      const textOffset = (contentWidth - textWidth) / 2;
-      doc.text(text, margin + textOffset, y);
-    };
-
-    centerText("Sarathi Book Shop", 3, 8);
-
-    // Add invoice header
-    // centerText(`Sarathi Book Shop`);
-    centerText(`Invoice #${invoice.id}`, 3);
-    centerText(`Date: ${new Date(invoice.created_at).toLocaleDateString()}`, 6);
-
-    // Add customer details
-    if (customer) {
-      centerText(`${customer.name}`, 9);
-    }
-
-    // Add items table
     doc.autoTable({
-      startY: 12,
-      head: [["Item", "Qty", "Total"]],
-      body: invoiceItems.map((item) => [
-        item.items.name,
-        item.quantity,
-        calculateItemTotal(item).toFixed(2),
-      ]),
-      styles: { fontSize: 5, cellPadding: 0.5, halign: "left" },
-      headStyles: {
-        fillColor: [200, 200, 200],
-        textColor: [0, 0, 0],
-        fontStyle: "bold",
-      },
+      startY: y,
+      head: [["QTY", "DESC", "RATE", "DISC", "AMOUNT"]],
+      body: [["5", "Atlas Chooty T", "25", "10", "115", "200.00"]],
+      theme: "grid",
+      headStyles: { fillColor: [255, 255, 255], textColor: 0, fontSize: 6 },
+      bodyStyles: { fontSize: 6 },
+      styles: { cellPadding: 0.5, minCellHeight: 4, halign: "center" },
+      margin: { left: 10, right: 10 }, // Center the table
       columnStyles: {
-        0: { cellWidth: 15 },
-        1: { cellWidth: 5, halign: "center" },
-        2: { cellWidth: 8, halign: "right" },
+        0: { cellWidth: 7 }, // Description
+        2: { cellWidth: 7 }, // Quantity
+        3: { cellWidth: 10 }, // Rate
+        4: { cellWidth: 7 }, // Discount
+        5: { cellWidth: 13 }, // Amount
       },
-      margin: { left: margin, right: margin },
     });
 
-    // Add totals
-    let finalY = doc.lastAutoTable.finalY + 1;
-    doc.setFontSize(5);
-    doc.text(`Subtotal: ${invoice.subtotal.toFixed(2)} LKR`, margin, finalY);
-    doc.text(
-      `Discount: ${(invoice.subtotal - invoice.total_amount).toFixed(2)} LKR`,
-      margin,
-      finalY + 2
-    );
-    doc.setFontSize(6);
-    doc.setFont(undefined, "bold");
-    doc.text(
-      `Total: ${invoice.total_amount.toFixed(2)} LKR`,
-      margin,
-      finalY + 4
-    );
+    y = doc.lastAutoTable.finalY + 5; // Reduced spacing after table
+    doc.setFontSize(8); // Keep smaller font size for summary
+    const summaryTexts = [
+      "SUB TOTAL: 200.00",
+      "DISCOUNT: 0.00",
+      "NET TOTAL: 200.00",
+      "PAID AMOUNT: 200.00",
+      "BALANCE: 0.00",
+      "DUE AMOUNT: 0.00",
+      "Total Discount: 0.00",
+      "No of Items: 1",
+      "No of Pcs: 2.00",
+    ];
 
-    // Save the PDF
-    doc.save(`invoice_${invoice.id}.pdf`);
+    summaryTexts.forEach((text) => {
+      doc.text(text, 5, y);
+      y += 3.5; // Reduced line spacing
+    });
+
+    y += 3; // Small space before final text
+    doc.setFontSize(9);
+    doc.text("THANK YOU COME AGAIN!!!", 40, y, null, null, "center");
+
+    // Calculate the final height dynamically
+    const finalHeight = y + 5; // Minimal bottom padding
+
+    // Update the document format with the new height
+    const pages = doc.internal.pages;
+    pages[1].splice(0, 1, {
+      id: pages[1][0].id,
+      width: pages[1][0].width,
+      height: finalHeight,
+    });
+
+    // doc.save("invoice.pdf");
+    doc.output("dataurlnewwindow");
   };
 
   if (loading) return <Spinner loading={loading} />;
@@ -162,12 +167,14 @@ export default function ViewSingleInvoice() {
       <div className="p-8">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">Invoice #{invoice.id}</h1>
-          <Button onClick={generatePDF}>Print Invoice</Button>
+          <Button onClick={handleDownloadPDF}>Download Invoice</Button>
         </div>
 
         <Card className="mb-6">
           <CardHeader>
-            <h2 className="text-xl font-semibold">Customer Details</h2>
+            <h2 className="text-xl font-semibold">
+              Customer Name : {customer.name}
+            </h2>
           </CardHeader>
           <CardContent>
             {customer && (
