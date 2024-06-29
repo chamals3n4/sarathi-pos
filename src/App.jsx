@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, BrowserRouter, Routes } from "react-router-dom";
+import React, { Children } from "react";
+import { Route, BrowserRouter, Routes, Navigate } from "react-router-dom";
 import Customers from "./pages/Customers";
 import Items from "./pages/Items";
 import Categories from "./pages/Categories";
@@ -15,28 +15,70 @@ import CreateNewInvoice from "./pages/CreateInvoice";
 import InvoiceSize from "./pages/InvoiceSize";
 import ViewSingleInvoice from "./pages/ViewSingleInvoice";
 
+const AdminRoute = ({ children }) => {
+  const isAdmin = localStorage.getItem("role") === "admin";
+  return isAdmin ? children : <Navigate to={"/regular"} />;
+};
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route>
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<SelectRole />} />
-            <Route path="/admin" element={<NavMenu />} />
-            <Route path="/regular" element={<NavMenu />} />
-            <Route path="/customers" element={<Customers />} />
-            <Route path="/items" element={<Items />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/sales" element={<Sales />} />
-            <Route path="/chamalsena" element={<Invoice />} />
-            <Route path="/invoice" element={<CreateNewInvoice />} />
-            <Route path="/view-invoices" element={<ViewAllInvoice />} />
-            <Route path="/invoice-size" element={<InvoiceSize />} />
-            <Route path="/view-invoices/:id" element={<ViewSingleInvoice />} />
-          </Route>
-          <Route path="/login" element={<AuthComponent />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<SelectRole />} />
+
+          {/* Admin routes */}
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <NavMenu />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/customers"
+            element={
+              <AdminRoute>
+                <Customers />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/items"
+            element={
+              <AdminRoute>
+                <Items />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/categories"
+            element={
+              <AdminRoute>
+                <Categories />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/sales"
+            element={
+              <AdminRoute>
+                <Sales />
+              </AdminRoute>
+            }
+          />
+
+          {/* Regular user routes */}
+          <Route path="/regular" element={<NavMenu />} />
+          <Route path="/chamalsena" element={<Invoice />} />
+          <Route path="/invoice" element={<CreateNewInvoice />} />
+          <Route path="/view-invoices" element={<ViewAllInvoice />} />
+          <Route path="/invoice-size" element={<InvoiceSize />} />
+          <Route path="/view-invoices/:id" element={<ViewSingleInvoice />} />
         </Route>
 
+        <Route path="/login" element={<AuthComponent />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

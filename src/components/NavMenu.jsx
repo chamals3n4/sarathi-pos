@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 
 export default function NavMenu() {
+  const userRole = localStorage.getItem("role");
+
   return (
     <>
       <h1 className="text-4xl text-sarathi-text pt-20 pl-20 font-bold">
@@ -38,36 +40,42 @@ export default function NavMenu() {
               View All Invoices
             </h1>
           </Link>
-          <Link to="/items">
-            <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px]">
-              <ListChecks className="w-[60px] h-[60px]" />
-            </Button>
-            <h1 className="text-lg font-semibold pt-3 text-center">
-              Manage Items
-            </h1>
-          </Link>
-          <Link to="/categories">
-            <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px]">
-              <Layers className="w-[60px] h-[60px]" />
-            </Button>
-            <h1 className="text-lg font-semibold pt-3 text-center">
-              Manage Categories
-            </h1>
-          </Link>
-          <Link to="/customers">
-            <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px] ">
-              <Users className="w-[60px] h-[60px] " />
-            </Button>
-            <h1 className="text-lg font-semibold pt-3 text-center">
-              Manage Customers
-            </h1>
-          </Link>
-          <Link to="/sales">
-            <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px]">
-              <TrendingUp className="w-[60px] h-[60px]" />
-            </Button>
-            <h1 className="text-lg font-semibold pt-3 text-center">Sales</h1>
-          </Link>
+          {userRole === "admin" && (
+            <>
+              <Link to="/admin/items">
+                <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px]">
+                  <ListChecks className="w-[60px] h-[60px]" />
+                </Button>
+                <h1 className="text-lg font-semibold pt-3 text-center">
+                  Manage Items
+                </h1>
+              </Link>
+              <Link to="/admin/categories">
+                <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px]">
+                  <Layers className="w-[60px] h-[60px]" />
+                </Button>
+                <h1 className="text-lg font-semibold pt-3 text-center">
+                  Manage Categories
+                </h1>
+              </Link>
+              <Link to="/admin/customers">
+                <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px] ">
+                  <Users className="w-[60px] h-[60px] " />
+                </Button>
+                <h1 className="text-lg font-semibold pt-3 text-center">
+                  Manage Customers
+                </h1>
+              </Link>
+              <Link to="/admin/sales">
+                <Button className="text-white text-2xl w-[150px] h-[150px] bg-choreo-blue rounded-[10px]">
+                  <TrendingUp className="w-[60px] h-[60px]" />
+                </Button>
+                <h1 className="text-lg font-semibold pt-3 text-center">
+                  Sales
+                </h1>
+              </Link>
+            </>
+          )}
         </>
       </div>
     </>

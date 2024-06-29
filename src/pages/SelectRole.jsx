@@ -23,6 +23,7 @@ export default function SelectRole() {
   const handleAdminSubmit = (e) => {
     e.preventDefault();
     if (adminPin === ADMIN_PIN) {
+      localStorage.setItem("role", "admin");
       navigate("/admin");
     } else {
       toast.error("Invalid PIN");
@@ -32,6 +33,7 @@ export default function SelectRole() {
   const handleEmployeeSubmit = (e) => {
     e.preventDefault();
     if (empPin === EMPLOYEE_PIN) {
+      localStorage.setItem("role", "regular");
       navigate("/regular");
     } else {
       toast.error("Invalid PIN");
