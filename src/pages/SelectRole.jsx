@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ShieldEllipsis, UserCheck } from "lucide-react";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -43,10 +41,11 @@ export default function SelectRole() {
   return (
     <>
       <ToastContainer />
+
       <div className="flex flex-wrap justify-center gap-[100px] pt-[150px]">
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="text-white text-2xl w-[350px] h-[150px] bg-delete-red rounded-[10px]">
+            <Button className="text-white text-2xl w-[350px] h-[150px] bg-choreo-blue rounded-[10px]">
               Admin Dashboard
             </Button>
           </DialogTrigger>
@@ -75,7 +74,7 @@ export default function SelectRole() {
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="text-white text-2xl w-[350px] h-[150px] bg-update-green rounded-[10px]">
+            <Button className="text-white text-2xl w-[350px] h-[150px] bg-choreo-blue rounded-[10px]">
               Regular Dashboard
             </Button>
           </DialogTrigger>
@@ -101,15 +100,6 @@ export default function SelectRole() {
             </form>
           </DialogContent>
         </Dialog>
-
-        {/* <Link to="/regular">
-          <Button className="text-white text-2xl w-[350px] h-[150px] bg-update-green rounded-[10px]">
-            <UserCheck className="w-[60px] h-[60px]" />
-          </Button>
-          <h1 className="text-xl font-semibold pt-3 text-center">
-            Regular Dashboard
-          </h1>
-        </Link> */}
       </div>
     </>
   );

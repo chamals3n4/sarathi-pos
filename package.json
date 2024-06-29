@@ -31,16 +31,20 @@
     "cmdk": "^1.0.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
     "lucide-react": "^0.394.0",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.1",
     "react-spinners": "^0.13.8",
+    "react-thermal-printer": "^0.18.1",
+    "react-to-print": "^2.15.1",
     "react-toastify": "^10.0.5",
     "recharts": "^2.12.7",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "vite-plugin-commonjs": "^0.10.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

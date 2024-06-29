@@ -9,6 +9,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -425,11 +434,13 @@ export default function CreateNewInvoice() {
                 <CardContent>
                   <div className="grid w-full items-center gap-4">
                     <div className="flex">
-                      <h1 className="flex-1">Sub Total</h1>
-                      <h1 className="flex-1">{calculateSubtotal()} LKR</h1>
+                      <h1 className="flex-1 font-semibold">Sub Total</h1>
+                      <h1 className="flex-1 font-semibold">
+                        {calculateSubtotal()} LKR
+                      </h1>
                     </div>
                     <Separator />
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 font-semibold">
                       <Label>Invoice Discount Type</Label>
                       <div className="flex gap-4">
                         <Label className="flex items-center gap-2">
@@ -458,7 +469,7 @@ export default function CreateNewInvoice() {
                         </Label>
                       </div>
                     </div>
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 font-semibold">
                       <Label>Invoice Discount Amount</Label>
                       <Input
                         type="number"
@@ -476,21 +487,26 @@ export default function CreateNewInvoice() {
                       />
                     </div>
                     <div className="flex">
-                      <h1 className="flex-1">Invoice Discount</h1>
-                      <h1 className="flex-1">
+                      <h1 className="flex-1 font-semibold">Invoice Discount</h1>
+                      <h1 className="flex-1 font-semibold">
                         {calculateInvoiceDiscount()} LKR
                       </h1>
                     </div>
                     <Separator />
                     <div className="flex">
-                      <h1 className="flex-1">Total</h1>
-                      <h1 className="flex-1">{calculateTotal()} LKR</h1>
+                      <h1 className="flex-1 font-semibold">Total</h1>
+                      <h1 className="flex-1 font-semibold">
+                        {calculateTotal()} LKR
+                      </h1>
                     </div>
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between">
-                  <Button variant="outline">Cancel</Button>
-                  <Button className="bg-choreo-blue" onClick={handleSubmit}>
+                  <Button variant="outline font-semibold">Cancel</Button>
+                  <Button
+                    className="bg-choreo-blue font-semibold"
+                    onClick={handleSubmit}
+                  >
                     Finish & Create
                   </Button>
                 </CardFooter>

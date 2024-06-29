@@ -13,6 +13,9 @@ import { Separator } from "@/components/ui/separator";
 import Spinner from "@/components/Spinner";
 import { useParams } from "react-router-dom";
 import MenuBar from "@/components/MenuBar";
+import { Button } from "@/components/ui/button";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 export default function ViewSingleInvoice() {
   const [invoice, setInvoice] = useState(null);
@@ -71,6 +74,84 @@ export default function ViewSingleInvoice() {
     return item.price * item.quantity - calculateItemDiscount(item);
   };
 
+  const generatePDF = () => {
+    const doc = new jsPDF({
+      unit: "mm",
+      format: [30, 297], // 30mm width, adjust height as needed
+    });
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 1; // 1mm margin on each side
+    const contentWidth = pageWidth - 2 * margin;
+
+    // Set font size
+    doc.setFontSize(6);
+
+    // Center-aligned text function
+    const centerText = (text, y) => {
+      const textWidth =
+        (doc.getStringUnitWidth(text) * doc.internal.getFontSize()) /
+        doc.internal.scaleFactor;
+      const textOffset = (contentWidth - textWidth) / 2;
+      doc.text(text, margin + textOffset, y);
+    };
+
+    centerText("Sarathi Book Shop", 3, 8);
+
+    // Add invoice header
+    // centerText(`Sarathi Book Shop`);
+    centerText(`Invoice #${invoice.id}`, 3);
+    centerText(`Date: ${new Date(invoice.created_at).toLocaleDateString()}`, 6);
+
+    // Add customer details
+    if (customer) {
+      centerText(`${customer.name}`, 9);
+    }
+
+    // Add items table
+    doc.autoTable({
+      startY: 12,
+      head: [["Item", "Qty", "Total"]],
+      body: invoiceItems.map((item) => [
+        item.items.name,
+        item.quantity,
+        calculateItemTotal(item).toFixed(2),
+      ]),
+      styles: { fontSize: 5, cellPadding: 0.5, halign: "left" },
+      headStyles: {
+        fillColor: [200, 200, 200],
+        textColor: [0, 0, 0],
+        fontStyle: "bold",
+      },
+      columnStyles: {
+        0: { cellWidth: 15 },
+        1: { cellWidth: 5, halign: "center" },
+        2: { cellWidth: 8, halign: "right" },
+      },
+      margin: { left: margin, right: margin },
+    });
+
+    // Add totals
+    let finalY = doc.lastAutoTable.finalY + 1;
+    doc.setFontSize(5);
+    doc.text(`Subtotal: ${invoice.subtotal.toFixed(2)} LKR`, margin, finalY);
+    doc.text(
+      `Discount: ${(invoice.subtotal - invoice.total_amount).toFixed(2)} LKR`,
+      margin,
+      finalY + 2
+    );
+    doc.setFontSize(6);
+    doc.setFont(undefined, "bold");
+    doc.text(
+      `Total: ${invoice.total_amount.toFixed(2)} LKR`,
+      margin,
+      finalY + 4
+    );
+
+    // Save the PDF
+    doc.save(`invoice_${invoice.id}.pdf`);
+  };
+
   if (loading) return <Spinner loading={loading} />;
   if (!invoice) return <div>Invoice not found</div>;
 
@@ -79,7 +160,11 @@ export default function ViewSingleInvoice() {
       <MenuBar />
 
       <div className="p-8">
-        <h1 className="text-2xl font-bold mb-4">Invoice #{invoice.id}</h1>
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold">Invoice #{invoice.id}</h1>
+          <Button onClick={generatePDF}>Print Invoice</Button>
+        </div>
+
         <Card className="mb-6">
           <CardHeader>
             <h2 className="text-xl font-semibold">Customer Details</h2>
