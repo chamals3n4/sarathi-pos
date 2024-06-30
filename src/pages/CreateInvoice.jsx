@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import supabase from "@/supabaseClient";
 import { Input } from "@/components/ui/input";
 import {
@@ -50,6 +50,11 @@ export default function CreateNewInvoice() {
 
   const [invoiceDiscountType, setInvoiceDiscountType] = useState("value");
   const [invoiceDiscountAmount, setInvoiceDiscountAmount] = useState(0);
+
+  const customerInputRef = useRef(null);
+  const itemInputRef = useRef(null);
+  const qtyInputRef = useRef(null);
+  const [activeSection, setActiveSection] = useState("customer");
 
   const navigate = useNavigate();
 
@@ -285,6 +290,59 @@ export default function CreateNewInvoice() {
     item.name.toLowerCase().includes(itemSearchTerm.toLowerCase())
   );
 
+  useEffect(() => {
+    document.addEventListener("keydown", handleGlobalKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleGlobalKeyDown);
+    };
+  }, []);
+
+  const handleGlobalKeyDown = (e) => {
+    if (e.key === "c" || e.key === "C") {
+      e.preventDefault();
+      setActiveSection("customer");
+      customerInputRef.current?.focus();
+    } else if (e.key === "i" || e.key === "I") {
+      e.preventDefault();
+      setActiveSection("item");
+      itemInputRef.current?.focus();
+    }
+  };
+
+  const handleKeyDown = (e, type) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      const increment = e.key === "ArrowDown" ? 1 : -1;
+      const list = type === "customer" ? filteredCustomers : filteredItems;
+      const setIndex =
+        type === "customer" ? setFocusedIndex : setItemFocusedIndex;
+      const currentIndex =
+        type === "customer" ? focusedIndex : itemFocusedIndex;
+
+      setIndex((prevIndex) => {
+        const newIndex = (prevIndex + increment + list.length) % list.length;
+        return newIndex;
+      });
+
+      if (type === "customer") {
+        setIsCustomerDropdownOpen(true);
+      } else {
+        setIsItemDropdownOpen(true);
+      }
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (type === "customer" && focusedIndex !== -1) {
+        const selectedCustomer = filteredCustomers[focusedIndex];
+        handleCustomerSelect(selectedCustomer.id, selectedCustomer.name);
+      } else if (type === "item" && itemFocusedIndex !== -1) {
+        handleItemSelect(filteredItems[itemFocusedIndex]);
+      }
+    } else if (e.key === "Escape") {
+      if (type === "customer") setIsCustomerDropdownOpen(false);
+      else setIsItemDropdownOpen(false);
+    }
+  };
+
   return (
     <>
       <ToastContainer />
@@ -295,11 +353,13 @@ export default function CreateNewInvoice() {
         <div className="pt-8 pl-[60px]">
           <div className="flex items-center space-x-5">
             <Input
+              ref={itemInputRef}
               type="text"
               className="w-[450px] my-3"
-              placeholder="Start typing item name"
+              placeholder="Start typing item name (Press 'I' to focus)"
               value={itemSearchTerm}
               onChange={handleItemSearchChange}
+              onKeyDown={(e) => handleKeyDown(e, "item")}
             />
           </div>
           {isItemDropdownOpen && (
@@ -338,13 +398,15 @@ export default function CreateNewInvoice() {
                       <TableCell className="w-[100px] font-bold">
                         {item.price}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="w-14 h-8 rounded-sm">
                         <Input
+                          ref={qtyInputRef}
                           className="w-14 h-8 rounded-sm"
                           value={item.qty}
                           onChange={(e) =>
                             handleQuantityChange(item.id, e.target.value)
                           }
+                          onKeyDown={(e) => handleKeyDown(e, "qty")}
                         />
                       </TableCell>
                       <TableCell>
@@ -384,10 +446,6 @@ export default function CreateNewInvoice() {
                         >
                           Remove
                         </Button>
-                        {/* <Trash2
-                        onClick={() => removeItem(item.id)}
-                        className="text-delete-red font-bold hover:cursor-pointer"
-                      /> */}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -407,10 +465,12 @@ export default function CreateNewInvoice() {
                     </Button>
 
                     <Input
+                      ref={customerInputRef}
                       type="text"
-                      placeholder="Search Customer"
+                      placeholder="Search Customer (Press 'C' to focus)"
                       value={searchTerm}
                       onChange={handleCustomerSearchChange}
+                      onKeyDown={(e) => handleKeyDown(e, "customer")}
                     />
                   </div>
                   {isCustomerDropdownOpen && (
