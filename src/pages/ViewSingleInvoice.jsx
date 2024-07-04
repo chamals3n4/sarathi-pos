@@ -91,7 +91,7 @@ export default function ViewSingleInvoice() {
     doc.setFontSize(10);
     doc.text("Near School,Wellawa.", 40, y, null, null, "center");
     y += 4; // Reduced spacing
-    doc.text("Tel: 037 223 5377 / 070 634 6344", 40, y, null, null, "center");
+    doc.text("Tel: 037 223 5377", 40, y, null, null, "center");
     y += 6; // Reduced spacing
     doc.setFontSize(8); // Reduced font size for details
     doc.text(`Invoice No: 000001`, 5, y);
