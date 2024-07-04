@@ -25,6 +25,8 @@ import { GalleryHorizontalEnd, ListOrdered } from "lucide-react";
 import MenuBar from "@/components/MenuBar";
 import Switch from "@/components/Swith";
 import { useNavigate, useParams } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import Footer from "@/components/Footer";
 
 export default function ViewAllInvoice() {
   const [invoices, setInvoices] = useState([]);
@@ -125,6 +127,11 @@ export default function ViewAllInvoice() {
                     <TableCell className="text-lg">
                       {formatDate(invoice.created_at)}
                     </TableCell>
+                    <TableCell className="text-lg">
+                      <Button className="bg-print-green h-8 hover:bg-print-green rounded-sm">
+                        Print Invoice
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -138,6 +145,7 @@ export default function ViewAllInvoice() {
           </Table>
         )}
       </div>
+      <Footer />
     </>
   );
 }

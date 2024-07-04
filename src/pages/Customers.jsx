@@ -34,6 +34,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import MenuBar from "@/components/MenuBar";
+import Footer from "@/components/Footer";
 
 export default function Customers() {
   const [applicants, setApplicants] = useState([]);
@@ -227,7 +228,9 @@ export default function Customers() {
                 </div>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button type="submit">Save Changes</Button>
+                    <Button className="bg-sarath-orange" type="submit">
+                      Save Changes
+                    </Button>
                   </DialogClose>
                 </DialogFooter>
               </form>
@@ -321,7 +324,7 @@ export default function Customers() {
                                   type="submit"
                                   className="bg-update-green"
                                 >
-                                  Save Changes
+                                  Update Changes
                                 </Button>
                               </DialogClose>
                             </DialogFooter>
@@ -342,6 +345,7 @@ export default function Customers() {
           </Table>
         )}
       </div>
+      <Footer />
     </>
   );
 }

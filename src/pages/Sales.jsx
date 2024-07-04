@@ -21,6 +21,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import Footer from "@/components/Footer";
 
 export default function ViewAllInvoice() {
   const [invoices, setInvoices] = useState([]);
@@ -132,6 +133,7 @@ export default function ViewAllInvoice() {
           </>
         )}
       </div>
+      <Footer />
     </>
   );
 }

@@ -9,15 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -33,6 +25,7 @@ import Spinner from "@/components/Spinner";
 import { useNavigate } from "react-router-dom";
 import { Trash2, User, UserRound, X } from "lucide-react";
 import MenuBar from "@/components/MenuBar";
+import Footer from "@/components/Footer";
 
 export default function CreateNewInvoice() {
   const [items, setItems] = useState([]);
@@ -54,6 +47,7 @@ export default function CreateNewInvoice() {
   const customerInputRef = useRef(null);
   const itemInputRef = useRef(null);
   const qtyInputRef = useRef(null);
+
   const [activeSection, setActiveSection] = useState("customer");
 
   const navigate = useNavigate();
@@ -306,28 +300,43 @@ export default function CreateNewInvoice() {
       e.preventDefault();
       setActiveSection("item");
       itemInputRef.current?.focus();
+    } else if (e.key === "q" || e.key === "Q") {
+      e.preventDefault();
+      setActiveSection("qty");
+      qtyInputRef.current?.focus();
     }
   };
 
-  const handleKeyDown = (e, type) => {
+  const handleKeyDown = (e, type, itemId) => {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
       const increment = e.key === "ArrowDown" ? 1 : -1;
-      const list = type === "customer" ? filteredCustomers : filteredItems;
-      const setIndex =
-        type === "customer" ? setFocusedIndex : setItemFocusedIndex;
-      const currentIndex =
-        type === "customer" ? focusedIndex : itemFocusedIndex;
 
-      setIndex((prevIndex) => {
-        const newIndex = (prevIndex + increment + list.length) % list.length;
-        return newIndex;
-      });
-
-      if (type === "customer") {
-        setIsCustomerDropdownOpen(true);
+      if (type === "qty") {
+        setSelectedItems((prevItems) =>
+          prevItems.map((item) =>
+            item.id === itemId
+              ? { ...item, qty: Math.max(1, item.qty + increment) }
+              : item
+          )
+        );
       } else {
-        setIsItemDropdownOpen(true);
+        const list = type === "customer" ? filteredCustomers : filteredItems;
+        const setIndex =
+          type === "customer" ? setFocusedIndex : setItemFocusedIndex;
+        const currentIndex =
+          type === "customer" ? focusedIndex : itemFocusedIndex;
+
+        setIndex((prevIndex) => {
+          const newIndex = (prevIndex + increment + list.length) % list.length;
+          return newIndex;
+        });
+
+        if (type === "customer") {
+          setIsCustomerDropdownOpen(true);
+        } else {
+          setIsItemDropdownOpen(true);
+        }
       }
     } else if (e.key === "Enter") {
       e.preventDefault();
@@ -336,11 +345,29 @@ export default function CreateNewInvoice() {
         handleCustomerSelect(selectedCustomer.id, selectedCustomer.name);
       } else if (type === "item" && itemFocusedIndex !== -1) {
         handleItemSelect(filteredItems[itemFocusedIndex]);
+      } else if (type === "qty") {
+        const nextInput = document.querySelector(`#discount-type-${itemId}`);
+        if (nextInput) {
+          nextInput.focus();
+        }
       }
     } else if (e.key === "Escape") {
       if (type === "customer") setIsCustomerDropdownOpen(false);
       else setIsItemDropdownOpen(false);
     }
+  };
+
+  const handleCancel = () => {
+    setSelectedCustomerId(null);
+    setSearchTerm("");
+    setSelectedItems([]);
+    setInvoiceDiscountType("value");
+    setInvoiceDiscountAmount(0);
+    setItemSearchTerm("");
+    setFocusedIndex(-1);
+    setItemFocusedIndex(-1);
+    setIsCustomerDropdownOpen(false);
+    setIsItemDropdownOpen(false);
   };
 
   return (
@@ -388,7 +415,7 @@ export default function CreateNewInvoice() {
                     <TableHead>Discount Type</TableHead>
                     <TableHead>Discount Amount</TableHead>
                     <TableHead>Total</TableHead>
-                    {/* <TableHead>Action</TableHead> */}
+                    <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -562,7 +589,12 @@ export default function CreateNewInvoice() {
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between">
-                  <Button variant="outline font-semibold">Cancel</Button>
+                  <Button
+                    variant="outline font-semibold"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </Button>
                   <Button
                     className="bg-choreo-blue font-semibold"
                     onClick={handleSubmit}
@@ -575,6 +607,7 @@ export default function CreateNewInvoice() {
           </div>
         </div>
       )}
+      <Footer />
     </>
   );
 }

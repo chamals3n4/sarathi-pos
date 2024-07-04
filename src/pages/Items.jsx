@@ -43,6 +43,7 @@ import { ListChecks } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MenuBar from "@/components/MenuBar";
+import Footer from "@/components/Footer";
 
 export default function Customers() {
   const [items, setItems] = useState([]);
@@ -52,6 +53,7 @@ export default function Customers() {
   const [itemQty, setItemQty] = useState("");
 
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [coreCategoryId, setCoreCategoryId] = useState(null);
   const [currentItem, setCurrentItem] = useState(null); // State to store the current item being edited
 
   const [loading, setLoading] = useState(true);
@@ -84,6 +86,13 @@ export default function Customers() {
           console.error("Error fetching data:", error.message);
         } else {
           setCategories(data || []);
+          const coreCategory = data.find(
+            (category) => category.name === "Core"
+          );
+          if (coreCategory) {
+            setCoreCategoryId(coreCategory.id);
+            setSelectedCategoryId(coreCategory.id);
+          }
         }
       } catch (error) {
         console.error("Error fetching data:", error.message);
@@ -103,7 +112,7 @@ export default function Customers() {
       name: itemName,
       price: parseFloat(itemPrice),
       qty: itemQty,
-      category_id: selectedCategoryId,
+      category_id: selectedCategoryId || coreCategoryId,
     };
 
     try {
@@ -122,7 +131,7 @@ export default function Customers() {
       console.log("Error inserting data", error.message);
       toast.error("Error Inserting Item");
     }
-    return navigate("/items");
+    return navigate("/admin/items");
   };
 
   const handleUpdate = async (e) => {
@@ -152,7 +161,7 @@ export default function Customers() {
       console.log("Error updating data", error.message);
       toast.error("Error Updating Item");
     }
-    return navigate("/items");
+    return navigate("/admin/items");
   };
 
   return (
@@ -219,7 +228,7 @@ export default function Customers() {
                     <div className="col-span-3">
                       <select
                         id="category"
-                        value={selectedCategoryId}
+                        value={selectedCategoryId || coreCategoryId}
                         onChange={(e) => setSelectedCategoryId(e.target.value)}
                         className="col-span-12 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
                       >
@@ -235,7 +244,9 @@ export default function Customers() {
                 </div>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button type="submit">Save Changes</Button>
+                    <Button className="bg-sarath-orange" type="submit">
+                      Save Changes
+                    </Button>
                   </DialogClose>
                 </DialogFooter>
               </form>
@@ -361,7 +372,7 @@ export default function Customers() {
                                   type="submit"
                                   className="bg-update-green"
                                 >
-                                  Save Changes
+                                  Update Changes
                                 </Button>
                               </DialogClose>
                             </DialogFooter>
@@ -382,6 +393,7 @@ export default function Customers() {
           </Table>
         )}
       </div>
+      <Footer />
     </>
   );
 }

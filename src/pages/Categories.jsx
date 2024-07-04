@@ -34,6 +34,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import MenuBar from "@/components/MenuBar";
+import Footer from "@/components/Footer";
 
 export default function Categories() {
   const [categories, setCategories] = useState([]);
@@ -112,7 +113,7 @@ export default function Categories() {
       console.log("Error updating data");
       toast.error("Error Updating Category");
     }
-    return navigate("/category");
+    return navigate("/admin/category");
   };
 
   return (
@@ -134,26 +135,28 @@ export default function Categories() {
               <Button className="bg-choreo-blue">Add New Category</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
+              <DialogHeader className="text-left">
                 <DialogTitle>Add New Category</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit}>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="name" className="text-right">
-                      Name
-                    </Label>
+                <div className="flex flex-col gap-4 py-4">
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="name">Name</Label>
                     <Input
                       id="name"
                       value={categoryName}
                       onChange={(e) => setCategoryName(e.target.value)}
-                      className="col-span-3"
                     />
                   </div>
                 </div>
-                <DialogFooter>
+                <DialogFooter className="flex flex-col items-start sm:flex-row sm:justify-start">
                   <DialogClose asChild>
-                    <Button type="submit">Save Changes</Button>
+                    <Button
+                      type="submit"
+                      className="w-full bg-sarath-orange sm:w-auto"
+                    >
+                      Save Changes
+                    </Button>
                   </DialogClose>
                 </DialogFooter>
               </form>
@@ -231,6 +234,7 @@ export default function Categories() {
           </Table>
         )}
       </div>
+      <Footer />
     </>
   );
 }

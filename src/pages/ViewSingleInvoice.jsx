@@ -16,6 +16,7 @@ import MenuBar from "@/components/MenuBar";
 import { Button } from "@/components/ui/button";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import Footer from "@/components/Footer";
 
 export default function ViewSingleInvoice() {
   const [invoice, setInvoice] = useState(null);
@@ -80,6 +81,9 @@ export default function ViewSingleInvoice() {
       unit: "mm",
       format: [80, 110], // Initial format, will be adjusted later
     });
+
+    doc.setFont("Arial");
+
     let y = 5; // Reduced initial Y position
     doc.setFontSize(12);
     doc.text("Sarathi Book Shop", 40, y, null, null, "center");
@@ -87,7 +91,7 @@ export default function ViewSingleInvoice() {
     doc.setFontSize(10);
     doc.text("Near School,Wellawa.", 40, y, null, null, "center");
     y += 4; // Reduced spacing
-    doc.text("Tel: 037-2235377", 40, y, null, null, "center");
+    doc.text("Tel: 037 223 5377 / 070 634 6344", 40, y, null, null, "center");
     y += 6; // Reduced spacing
     doc.setFontSize(8); // Reduced font size for details
     doc.text(`Invoice No: 000001`, 5, y);
@@ -103,7 +107,10 @@ export default function ViewSingleInvoice() {
 
     const tableData = invoiceItems.map((item) => [
       item.quantity,
-      item.items.name,
+      // item.items.name,
+      item.items.name.length > 10
+        ? item.items.name.substring(0, 15)
+        : item.items.name,
       item.price,
       item.discount_type === "value"
         ? item.discount_amount
@@ -115,11 +122,11 @@ export default function ViewSingleInvoice() {
       startY: y,
       head: [["QTY", "DESC", "RATE", "DISC", "AMOUNT"]],
       body: tableData,
-      theme: "grid",
+      theme: "plain",
       headStyles: { fillColor: [255, 255, 255], textColor: 0, fontSize: 6 },
-      bodyStyles: { fontSize: 6 },
+      bodyStyles: { fontSize: 7 },
       styles: { cellPadding: 0.5, minCellHeight: 4, halign: "center" },
-      margin: { left: 10, right: 10 }, // Center the table
+      margin: { left: 5, right: 5 }, // Center the table
       columnStyles: {
         0: { cellWidth: 7 }, // Quantity
         1: { cellWidth: 30 }, // Description
@@ -135,15 +142,6 @@ export default function ViewSingleInvoice() {
       `SUB TOTAL: ${invoice.subtotal} LKR`,
       `DISCOUNT: ${invoice.subtotal - invoice.total_amount} LKR`,
       `NET TOTAL: ${invoice.total_amount} LKR`,
-      `PAID AMOUNT: ${invoice.total_amount} LKR`,
-      `BALANCE: 0.00 LKR`,
-      `DUE AMOUNT: 0.00 LKR`,
-      `Total Discount: ${invoice.subtotal - invoice.total_amount} LKR`,
-      `No of Items: ${invoiceItems.length}`,
-      `No of Pcs: ${invoiceItems.reduce(
-        (sum, item) => sum + item.quantity,
-        0
-      )}`,
     ];
 
     summaryTexts.forEach((text) => {
@@ -153,7 +151,7 @@ export default function ViewSingleInvoice() {
 
     y += 3; // Small space before final text
     doc.setFontSize(9);
-    doc.text("THANK YOU COME AGAIN!!!", 40, y, null, null, "center");
+    doc.text("THANK YOU COME AGAIN !!!", 40, y, null, null, "center");
 
     // Calculate the final height dynamically
     const finalHeight = y + 5; // Minimal bottom padding
@@ -179,31 +177,27 @@ export default function ViewSingleInvoice() {
 
       <div className="p-8">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Invoice #{invoice.id}</h1>
-          <Button className="bg-delete-red" onClick={handleDownloadPDF}>
+          <h1 className="text-2xl font-bold">Invoice No.{invoice.id}</h1>
+          <Button
+            className="bg-print-green hover:bg-print-green"
+            onClick={handleDownloadPDF}
+          >
             Download Invoice
           </Button>
         </div>
 
-        <Card className="mb-6">
+        <Card className="mb-6 bg-invoice-green">
           <CardHeader>
             <h2 className="text-xl font-semibold">
-              Customer Name : {customer.name}
+              Sub Total : {invoice.subtotal}
+            </h2>
+            <h2 className="text-xl font-semibold">
+              Invoice Discount : {invoice.subtotal - invoice.total_amount} LKR
+            </h2>
+            <h2 className="text-xl font-semibold">
+              Total : {invoice.total_amount} LKR
             </h2>
           </CardHeader>
-          <CardContent>
-            {customer && (
-              <>
-                <p>
-                  <strong>Name:</strong> {customer.name}
-                </p>
-                <p>
-                  <strong>Email:</strong> {customer.email}
-                </p>
-                {/* Add more customer details as needed */}
-              </>
-            )}
-          </CardContent>
         </Card>
 
         <Table>
@@ -220,39 +214,24 @@ export default function ViewSingleInvoice() {
           <TableBody>
             {invoiceItems.map((item) => (
               <TableRow key={item.id}>
-                <TableCell>{item.items.name}</TableCell>
-                <TableCell>{item.price}</TableCell>
-                <TableCell>{item.quantity}</TableCell>
-                <TableCell>{item.discount_type}</TableCell>
-                <TableCell>{item.discount_amount}</TableCell>
-                <TableCell>{calculateItemTotal(item)}</TableCell>
+                <TableCell className="font-semibold">
+                  {item.items.name}
+                </TableCell>
+                <TableCell className="font-semibold">{item.price}</TableCell>
+                <TableCell className="font-semibold">{item.quantity}</TableCell>
+                <TableCell className="font-semibold">
+                  {item.discount_type}
+                </TableCell>
+                <TableCell className="font-semibold">
+                  {item.discount_amount}
+                </TableCell>
+                <TableCell className="font-semibold">
+                  {calculateItemTotal(item)}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-
-        <Card className="mt-6 w-[350px] ml-auto">
-          <CardContent className="pt-6">
-            <div className="grid w-full items-center gap-4">
-              <div className="flex">
-                <h1 className="flex-1">Sub Total</h1>
-                <h1 className="flex-1">{invoice.subtotal} LKR</h1>
-              </div>
-              <Separator />
-              <div className="flex">
-                <h1 className="flex-1">Invoice Discount</h1>
-                <h1 className="flex-1">
-                  {invoice.subtotal - invoice.total_amount} LKR
-                </h1>
-              </div>
-              <Separator />
-              <div className="flex">
-                <h1 className="flex-1">Total</h1>
-                <h1 className="flex-1">{invoice.total_amount} LKR</h1>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </>
   );
