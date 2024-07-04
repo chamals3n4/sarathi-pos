@@ -1,6 +1,14 @@
-## React + Supabase POS System
+## Point of Sale System for Sarthi Bookshop
 
-POS System for Sarathi Book Shop
+This Point of Sale (POS) system is designed specifically for Sarthi Bookshop to streamline sales processes and manage inventory efficiently.
+
+### Key Features
+
+- **Create Invoice:** Generate new invoices for customer purchases.
+- **View Invoices:** Manage existing invoices.
+- **Create Items:** Add and manage items available for sale.
+- **Customers:** Maintain customer information for personalized service.
+- **Check Sales:** View sales data to analyze business performance. Currently supports monthly revenue tracking.
 
 ### Tech Stack
 
@@ -37,3 +45,9 @@ Start the server
 ```bash
   npm run dev
 ```
+
+Once everything is set up, you can access the POS system through your local development server [ [localhost:5173](http://localhost:5173/) ]
+
+###
+
+© Copyright 2024 [@chamals3n4](https://www.github.com/chamals3n4)
