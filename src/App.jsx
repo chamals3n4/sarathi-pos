@@ -12,7 +12,6 @@ import AuthComponent from "./components/AuthComponent";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import SelectRole from "./pages/SelectRole";
 import CreateNewInvoice from "./pages/CreateInvoice";
-import InvoiceSize from "./pages/InvoiceSize";
 import ViewSingleInvoice from "./pages/ViewSingleInvoice";
 
 const AdminRoute = ({ children }) => {
@@ -74,7 +73,6 @@ export default function App() {
           <Route path="/chamalsena" element={<Invoice />} />
           <Route path="/invoice" element={<CreateNewInvoice />} />
           <Route path="/view-invoices" element={<ViewAllInvoice />} />
-          <Route path="/invoice-size" element={<InvoiceSize />} />
           <Route path="/view-invoices/:id" element={<ViewSingleInvoice />} />
         </Route>
 

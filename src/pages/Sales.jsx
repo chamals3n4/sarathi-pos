@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
 import supabase from "@/supabaseClient";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import Spinner from "@/components/Spinner";
 import { TrendingUp } from "lucide-react";
 import MenuBar from "@/components/MenuBar";

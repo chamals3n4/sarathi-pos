@@ -605,9 +605,9 @@ export default function CreateNewInvoice() {
               </Card>
             </div>
           </div>
+          <Footer />
         </div>
       )}
-      <Footer />
     </>
   );
 }

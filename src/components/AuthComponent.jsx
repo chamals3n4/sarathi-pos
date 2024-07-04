@@ -39,9 +39,9 @@ export default function Example() {
       <ToastContainer />
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-20 text-center text-3xl font-semibold leading-9 tracking-tight text-sarathi-text">
-            Login to the System
-          </h2>
+          <h1 className="mt-20 text-center text-3xl font-semibold leading-9 tracking-tight text-sarathi-text">
+            Log In to Your Account
+          </h1>
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -74,14 +74,14 @@ export default function Example() {
                 >
                   Password
                 </label>
-                <div className="text-sm">
+                {/* <div className="text-sm">
                   <a
                     href="#"
                     className="font-semibold text-indigo-600 hover:text-indigo-500"
                   >
                     Forgot password?
                   </a>
-                </div>
+                </div> */}
               </div>
               <div className="mt-2">
                 <input

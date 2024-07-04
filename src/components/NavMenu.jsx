@@ -9,12 +9,14 @@ import {
   FilePlus,
   ListOrdered,
 } from "lucide-react";
+import MenuBar from "./MenuBar";
 
 export default function NavMenu() {
   const userRole = localStorage.getItem("role");
 
   return (
     <>
+      <MenuBar simple />
       <h1 className="text-4xl text-sarathi-text pt-20 pl-20 font-bold">
         Welcome Again
       </h1>

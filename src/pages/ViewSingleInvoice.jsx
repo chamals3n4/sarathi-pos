@@ -94,11 +94,17 @@ export default function ViewSingleInvoice() {
     doc.text("Tel: 037 223 5377", 40, y, null, null, "center");
     y += 6; // Reduced spacing
     doc.setFontSize(8); // Reduced font size for details
-    doc.text(`Invoice No: 000001`, 5, y);
+
+    // Get the current date and time
+    const now = new Date();
+    const date = now.toISOString().split("T")[0]; // YYYY-MM-DD format
+    const time = now.toTimeString().split(" ")[0]; // HH:MM:SS format
+
+    doc.text(`Invoice No: ${invoice.id}`, 5, y);
     y += 4;
-    doc.text(`Date: 2024-02-23`, 5, y);
+    doc.text(`Date: ${date}`, 5, y);
     y += 4;
-    doc.text(`Time: 22:53:57 PM`, 5, y);
+    doc.text(`Time: ${time}`, 5, y);
     y += 4;
     // doc.text(`User: ADMIN`, 5, y);
     // y += 4;
