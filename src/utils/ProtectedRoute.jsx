@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Outlet, Navigate } from "react-router-dom";
-import { createClient } from "@supabase/supabase-js";
+
 
 import supabase from "@/supabaseClient";
 

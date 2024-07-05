@@ -7,7 +7,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -16,9 +15,7 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -44,6 +41,7 @@ export default function Categories() {
 
   const navigate = useNavigate();
 
+  //useEffect to fetch Categories from Supabase
   useEffect(() => {
     async function fetchCategories() {
       try {
@@ -64,7 +62,7 @@ export default function Categories() {
     fetchCategories();
   }, []);
 
-  // Create new category
+  // Handle form submisson to create a new category - async
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -86,10 +84,10 @@ export default function Categories() {
     } catch (error) {
       console.log("Error inserting data", error.message);
     }
-    navigate("/categories");
+    navigate("/admin/categories");
   };
 
-  // Update Category
+  // Handle form to update existing item
   const handleUpdate = async (e) => {
     e.preventDefault();
     const updatedCategory = {
@@ -106,7 +104,7 @@ export default function Categories() {
         console.log("Error updating data");
         toast.error("Error Updating Category");
       } else {
-        console.log("Data updated successfully");
+        console.log("Data updated successfully",data);
         toast.success("Category Updated Successfully");
       }
     } catch (error) {
@@ -169,7 +167,6 @@ export default function Categories() {
           <Table>
             <TableHeader>
               <TableRow>
-                {/* <TableHead className="w-[200px] text-lg">ID</TableHead> */}
                 <TableHead className="text-lg">Category Name</TableHead>
               </TableRow>
             </TableHeader>
@@ -177,7 +174,6 @@ export default function Categories() {
               {categories.length > 0 ? (
                 categories.map((category) => (
                   <TableRow key={category.id}>
-                    {/* <TableCell className="text-lg">{category.id}</TableCell> */}
                     <TableCell className="text-lg">{category.name}</TableCell>
                     <TableCell className="text-lg">
                       <Dialog>

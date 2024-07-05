@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import supabase from "@/supabaseClient";
 import Spinner from "@/components/Spinner";
 import { TrendingUp } from "lucide-react";
@@ -96,32 +96,6 @@ export default function ViewAllInvoice() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            {/* <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-lg font-medium">Month</TableHead>
-                  <TableHead className="text-lg font-medium">
-                    Total Revenue
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {monthlyRevenue.length > 0 ? (
-                  monthlyRevenue.map((entry) => (
-                    <TableRow key={entry.month}>
-                      <TableCell className="text-lg">{entry.month}</TableCell>
-                      <TableCell className="text-lg">{entry.revenue}</TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={2} className="text-center">
-                      No revenue data available
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table> */}
           </>
         )}
       </div>

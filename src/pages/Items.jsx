@@ -1,20 +1,11 @@
 import { useState, useEffect } from "react";
 import supabase from "@/supabaseClient";
-import { TableDemo } from "@/components/Table";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useNavigate } from "react-router-dom";
+
 import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -23,27 +14,23 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-import Items from "./Items";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 
+import MenuBar from "@/components/MenuBar";
+import Footer from "@/components/Footer";
 import Spinner from "@/components/Spinner";
+
 import { ListChecks } from "lucide-react";
 
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import MenuBar from "@/components/MenuBar";
-import Footer from "@/components/Footer";
 
 export default function Customers() {
   const [items, setItems] = useState([]);
@@ -56,10 +43,13 @@ export default function Customers() {
   const [coreCategoryId, setCoreCategoryId] = useState(null);
   const [currentItem, setCurrentItem] = useState(null); // State to store the current item being edited
 
+  const [searchTerm, setSearchTerm] = useState("");
+
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
+  //useEffect to fetch Items and Categories from Supabase
   useEffect(() => {
     async function fetchItems() {
       try {
@@ -105,6 +95,7 @@ export default function Customers() {
     fetchCategories();
   }, []);
 
+  // Handle form submisson to create a new item - async
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -134,6 +125,7 @@ export default function Customers() {
     return navigate("/admin/items");
   };
 
+  // Handle form to update existing item
   const handleUpdate = async (e) => {
     e.preventDefault();
 
@@ -164,6 +156,10 @@ export default function Customers() {
     return navigate("/admin/items");
   };
 
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <>
       <ToastContainer />
@@ -177,6 +173,13 @@ export default function Customers() {
             <h1 className="text-3xl text-sarathi-text font-bold">
               Manage Items
             </h1>
+            <Input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-[500px] my-3"
+              placeholder="Start typing item name"
+            />
           </div>
           <Dialog>
             <DialogTrigger asChild>
@@ -259,9 +262,6 @@ export default function Customers() {
           <Table>
             <TableHeader>
               <TableRow>
-                {/* <TableHead className="w-[100px] text-lg font-medium">
-                  ID
-                </TableHead> */}
                 <TableHead className="text-lg font-medium">Name</TableHead>
                 <TableHead className="text-lg font-medium">Price</TableHead>
                 <TableHead className="text-lg font-medium">Quantity</TableHead>
@@ -272,10 +272,9 @@ export default function Customers() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {items.length > 0 ? (
-                items.map((item) => (
+              {filteredItems.length > 0 ? (
+                filteredItems.map((item) => (
                   <TableRow key={item.id}>
-                    {/* <TableCell className="text-lg">{item.id}</TableCell> */}
                     <TableCell className="text-lg">{item.name}</TableCell>
                     <TableCell className="text-lg">{item.price}</TableCell>
                     <TableCell className="text-lg">{item.qty}</TableCell>

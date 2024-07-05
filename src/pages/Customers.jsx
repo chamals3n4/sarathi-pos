@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -14,9 +13,7 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -93,79 +90,36 @@ export default function Customers() {
     return navigate("/customers");
   };
 
-  // Update Customer
-  // const handleUpdate = async (e) => {
-  //   e.preventDefault();
-
-  //   if (!currentCustomer) {
-  //     console.error("No customer selected for update");
-  //     return;
-  //   }
-
-  //   const updatedCustomer = {
-  //     name: name,
-  //     phone: phone,
-  //     address: address,
-  //   };
-
-  //   try {
-  //     const { data, error } = await supabase
-  //       .from("customers")
-  //       .update(updatedCustomer)
-  //       .eq("id", currentCustomer.id)
-  //       .select();
-  //     if (error) {
-  //       console.log("Error updating data", error.message);
-  //       toast.error("Error Updating Customer");
-  //     } else {
-  //       console.log("Data updated successfully", data);
-  //       toast.success("Customer Updated Successfully");
-  //     }
-  //   } catch (error) {
-  //     console.log("Error updating data", error.message);
-  //     toast.error("Error Updating Customer");
-  //   }
-  // };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-
-    if (!currentCustomer) {
-      console.error("No customer selected for update");
-      return;
-    }
-
-    const updatedApplicants = [...applicants]; // Create a copy of the applicants array
-
-    const customerIndex = applicants.findIndex(
-      (applicant) => applicant.id === currentCustomer.id
-    );
-
-    if (customerIndex !== -1) {
-      updatedApplicants[customerIndex] = {
-        ...currentCustomer, // Spread the current customer data
-        name: name,
-        phone: phone,
-        address: address,
-      };
-
-      try {
-        // Update logic with supabase using updatedApplicants
-        const { data, error } = await supabase
-          .from("customers")
-          .update(updatedApplicants[customerIndex]) // Update the specific object
-          .eq("id", currentCustomer.id)
-          .select();
-        // ... rest of the update logic
-      } catch (error) {
-        // ... handle errors
-      } finally {
-        setApplicants(updatedApplicants); // Set the state with the updated array
+  
+    const updatedCustomer = {
+      name: name,
+      phone: phone,
+      address: address,
+    };
+  
+    try {
+      const { data, error } = await supabase
+        .from("customers")
+        .update(updatedCustomer)
+        .eq("id", currentCustomer.id)
+        .select();
+      if (error) {
+        console.log("Error updating data", error.message);
+        toast.error("Error Updating Customer");
+      } else {
+        console.log("Data updated successfully", data);
+        toast.success("Customer Updated Successfully");
       }
-    } else {
-      console.error("Customer not found in the list");
+    } catch (error) {
+      console.log("Error updating data", error.message);
+      toast.error("Error Updating Customer");
     }
+    return navigate("/admin/customers");
   };
+
 
   return (
     <>
@@ -243,9 +197,6 @@ export default function Customers() {
           <Table>
             <TableHeader>
               <TableRow>
-                {/* <TableHead className="w-[100px] text-lg font-medium">
-                  ID
-                </TableHead> */}
                 <TableHead className="text-lg font-medium">Name</TableHead>
                 <TableHead className="text-lg font-medium">Phone</TableHead>
                 <TableHead className="text-lg font-medium">Address</TableHead>
@@ -255,7 +206,6 @@ export default function Customers() {
               {applicants.length > 0 ? (
                 applicants.map((applicant) => (
                   <TableRow key={applicant.id}>
-                    {/* <TableCell className="text-lg">{applicant.id}</TableCell> */}
                     <TableCell className="text-lg">{applicant.name}</TableCell>
                     <TableCell className="text-lg">{applicant.phone}</TableCell>
                     <TableCell className="text-lg">

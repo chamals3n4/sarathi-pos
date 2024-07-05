@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import {
@@ -17,7 +16,7 @@ export default function NavMenu() {
   return (
     <>
       <MenuBar simple />
-      <h1 className="text-4xl text-sarathi-text pt-20 pl-20 font-bold">
+      <h1 className="text-4xl text-sarathi-text italic pt-20 pl-20 font-bold">
         Welcome Again
       </h1>
       <div className="flex flex-wrap justify-center gap-14 pt-[60px]">

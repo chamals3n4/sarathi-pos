@@ -1,10 +1,10 @@
-import React, { Children } from "react";
+import React from "react";
 import { Route, BrowserRouter, Routes, Navigate } from "react-router-dom";
 import Customers from "./pages/Customers";
 import Items from "./pages/Items";
 import Categories from "./pages/Categories";
 import Sales from "./pages/Sales";
-import Invoice from "./pages/Invoice";
+// import Invoice from "./pages/Invoice";
 import NotFoundPage from "./pages/NotFoundPage";
 import NavMenu from "./components/NavMenu";
 import ViewAllInvoice from "./pages/ViewAllInvoice";
@@ -70,7 +70,6 @@ export default function App() {
 
           {/* Regular user routes */}
           <Route path="/regular" element={<NavMenu />} />
-          <Route path="/chamalsena" element={<Invoice />} />
           <Route path="/invoice" element={<CreateNewInvoice />} />
           <Route path="/view-invoices" element={<ViewAllInvoice />} />
           <Route path="/view-invoices/:id" element={<ViewSingleInvoice />} />

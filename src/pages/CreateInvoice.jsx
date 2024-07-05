@@ -23,7 +23,7 @@ import { Label } from "@radix-ui/react-label";
 import Spinner from "@/components/Spinner";
 
 import { useNavigate } from "react-router-dom";
-import { Trash2, User, UserRound, X } from "lucide-react";
+import { User } from "lucide-react";
 import MenuBar from "@/components/MenuBar";
 import Footer from "@/components/Footer";
 
