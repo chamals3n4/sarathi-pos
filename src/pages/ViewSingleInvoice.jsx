@@ -8,14 +8,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card,CardHeader } from "@/components/ui/card";
+import { Card, CardHeader } from "@/components/ui/card";
 import Spinner from "@/components/Spinner";
 import { useParams } from "react-router-dom";
 import MenuBar from "@/components/MenuBar";
 import { Button } from "@/components/ui/button";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
-
 
 export default function ViewSingleInvoice() {
   const [invoice, setInvoice] = useState(null);
@@ -238,7 +237,6 @@ export default function ViewSingleInvoice() {
           </TableBody>
         </Table>
       </div>
-    
     </>
   );
 }

@@ -263,6 +263,9 @@ export default function Customers() {
             <TableHeader>
               <TableRow>
                 <TableHead className="text-lg font-medium">Name</TableHead>
+                <TableHead className="text-lg font-medium">
+                  Sinhala Test
+                </TableHead>
                 <TableHead className="text-lg font-medium">Price</TableHead>
                 <TableHead className="text-lg font-medium">Quantity</TableHead>
                 <TableHead className="text-lg font-medium">
@@ -276,6 +279,9 @@ export default function Customers() {
                 filteredItems.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell className="text-lg">{item.name}</TableCell>
+                    <TableCell className="text-lg">
+                      {item.sinhala_item_name}
+                    </TableCell>
                     <TableCell className="text-lg">{item.price}</TableCell>
                     <TableCell className="text-lg">{item.qty}</TableCell>
                     <TableCell className="text-lg">
