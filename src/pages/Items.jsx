@@ -32,6 +32,8 @@ import { ListChecks } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { DataTable } from "@/components/DataTable";
+
 export default function Customers() {
   const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -117,12 +119,12 @@ export default function Customers() {
       } else {
         console.log("Data inserted successfully", data);
         toast.success("Item Created Successfully");
+        return navigate("/admin/items");
       }
     } catch (error) {
       console.log("Error inserting data", error.message);
       toast.error("Error Inserting Item");
     }
-    return navigate("/admin/items");
   };
 
   // Handle form to update existing item
@@ -156,9 +158,115 @@ export default function Customers() {
     return navigate("/admin/items");
   };
 
-  const filteredItems = items.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const columns = [
+    {
+      accessorKey: "name",
+      header: "Name",
+    },
+    {
+      accessorKey: "price",
+      header: "Price",
+    },
+    {
+      accessorKey: "qty",
+      header: "Quantity",
+    },
+    {
+      accessorKey: "categories.name",
+      header: "Item Category",
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              className="bg-update-green h-8 rounded-sm"
+              onClick={() => {
+                setCurrentItem(row.original);
+                setItemName(row.original.name);
+                setItemPrice(row.original.price);
+                setItemQty(row.original.qty);
+                setSelectedCategoryId(row.original.category_id);
+              }}
+            >
+              Update Item
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Update the Item</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleUpdate}>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Name
+                  </Label>
+                  <Input
+                    id="name"
+                    value={itemName}
+                    onChange={(e) => setItemName(e.target.value)}
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="price" className="text-right">
+                    Price
+                  </Label>
+                  <Input
+                    id="price"
+                    value={itemPrice}
+                    onChange={(e) => setItemPrice(e.target.value)}
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="qty" className="text-right">
+                    Quantity
+                  </Label>
+                  <Input
+                    id="qty"
+                    value={itemQty}
+                    onChange={(e) => setItemQty(e.target.value)}
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="category" className="text-right">
+                    Category
+                  </Label>
+                  <div className="col-span-3">
+                    <select
+                      id="category"
+                      value={selectedCategoryId}
+                      onChange={(e) => setSelectedCategoryId(e.target.value)}
+                      className="col-span-12 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
+                    >
+                      <option value="">Select a category</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button type="submit" className="bg-update-green">
+                    Update Changes
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+      ),
+    },
+  ];
 
   return (
     <>
@@ -173,229 +281,90 @@ export default function Customers() {
             <h1 className="text-3xl text-sarathi-text font-bold">
               Manage Items
             </h1>
-            <Input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-[500px] my-3"
-              placeholder="Start typing item name"
-            />
           </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="bg-choreo-blue">Add New Item</Button>
+              <Button className="bg-choreo-blue ">Add New Item</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Add New Item</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit}>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="name" className="text-right">
-                      Name
-                    </Label>
-                    <Input
-                      id="name"
-                      value={itemName}
-                      onChange={(e) => setItemName(e.target.value)}
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="price" className="text-right">
-                      Price
-                    </Label>
-                    <Input
-                      id="price"
-                      value={itemPrice}
-                      onChange={(e) => setItemPrice(e.target.value)}
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="qty" className="text-right">
-                      Quantity
-                    </Label>
-                    <Input
-                      id="qty"
-                      value={itemQty}
-                      onChange={(e) => setItemQty(e.target.value)}
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="category" className="text-right">
-                      Category
-                    </Label>
-                    <div className="col-span-3">
-                      <select
-                        id="category"
-                        value={selectedCategoryId || coreCategoryId}
-                        onChange={(e) => setSelectedCategoryId(e.target.value)}
-                        className="col-span-12 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
-                      >
-                        <option value="">Select a category</option>
-                        {categories.map((category) => (
-                          <option key={category.id} value={category.id}>
-                            {category.name}
-                          </option>
-                        ))}
-                      </select>
+              <div id="dialog-description">
+                <DialogHeader>
+                  <DialogTitle>Add New Item</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit}>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="name" className="text-right">
+                        Name
+                      </Label>
+                      <Input
+                        id="name"
+                        value={itemName}
+                        onChange={(e) => setItemName(e.target.value)}
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="price" className="text-right">
+                        Price
+                      </Label>
+                      <Input
+                        id="price"
+                        value={itemPrice}
+                        onChange={(e) => setItemPrice(e.target.value)}
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="qty" className="text-right">
+                        Quantity
+                      </Label>
+                      <Input
+                        id="qty"
+                        value={itemQty}
+                        onChange={(e) => setItemQty(e.target.value)}
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="category" className="text-right">
+                        Category
+                      </Label>
+                      <div className="col-span-3">
+                        <select
+                          id="category"
+                          value={selectedCategoryId || coreCategoryId}
+                          onChange={(e) =>
+                            setSelectedCategoryId(e.target.value)
+                          }
+                          className="col-span-12 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
+                        >
+                          <option value="">Select a category</option>
+                          {categories.map((category) => (
+                            <option key={category.id} value={category.id}>
+                              {category.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button className="bg-sarath-orange" type="submit">
-                      Save Changes
-                    </Button>
-                  </DialogClose>
-                </DialogFooter>
-              </form>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button className="bg-sarath-orange" type="submit">
+                        Save Changes
+                      </Button>
+                    </DialogClose>
+                  </DialogFooter>
+                </form>
+              </div>
             </DialogContent>
           </Dialog>
         </div>
         {loading ? (
           <Spinner loading={loading} />
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-lg font-medium">Name</TableHead>
-                <TableHead className="text-lg font-medium">
-                  Sinhala Test
-                </TableHead>
-                <TableHead className="text-lg font-medium">Price</TableHead>
-                <TableHead className="text-lg font-medium">Quantity</TableHead>
-                <TableHead className="text-lg font-medium">
-                  Item Category
-                </TableHead>
-                <TableHead className="text-lg font-medium">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredItems.length > 0 ? (
-                filteredItems.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="text-lg">{item.name}</TableCell>
-                    <TableCell className="text-lg">
-                      {item.sinhala_item_name}
-                    </TableCell>
-                    <TableCell className="text-lg">{item.price}</TableCell>
-                    <TableCell className="text-lg">{item.qty}</TableCell>
-                    <TableCell className="text-lg">
-                      {item.categories.name}
-                    </TableCell>
-                    <TableCell className="text-lg">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            className="bg-update-green h-8 rounded-sm"
-                            onClick={() => {
-                              setCurrentItem(item);
-                              setItemName(item.name);
-                              setItemPrice(item.price);
-                              setItemQty(item.qty);
-                              setSelectedCategoryId(item.category_id);
-                            }}
-                          >
-                            Update Item
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                          <DialogHeader>
-                            <DialogTitle>Update the Item</DialogTitle>
-                          </DialogHeader>
-                          <form onSubmit={handleUpdate}>
-                            <div className="grid gap-4 py-4">
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="name" className="text-right">
-                                  Name
-                                </Label>
-                                <Input
-                                  id="name"
-                                  value={itemName}
-                                  onChange={(e) => setItemName(e.target.value)}
-                                  className="col-span-3"
-                                />
-                              </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="price" className="text-right">
-                                  Price
-                                </Label>
-                                <Input
-                                  id="price"
-                                  value={itemPrice}
-                                  onChange={(e) => setItemPrice(e.target.value)}
-                                  className="col-span-3"
-                                />
-                              </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="qty" className="text-right">
-                                  Quantity
-                                </Label>
-                                <Input
-                                  id="qty"
-                                  value={itemQty}
-                                  onChange={(e) => setItemQty(e.target.value)}
-                                  className="col-span-3"
-                                />
-                              </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <Label
-                                  htmlFor="category"
-                                  className="text-right"
-                                >
-                                  Category
-                                </Label>
-                                <div className="col-span-3">
-                                  <select
-                                    id="category"
-                                    value={selectedCategoryId}
-                                    onChange={(e) =>
-                                      setSelectedCategoryId(e.target.value)
-                                    }
-                                    className="col-span-12 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sarathi-text sm:max-w-xs sm:text-sm sm:leading-6"
-                                  >
-                                    <option value="">Select a category</option>
-                                    {categories.map((category) => (
-                                      <option
-                                        key={category.id}
-                                        value={category.id}
-                                      >
-                                        {category.name}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </div>
-                              </div>
-                            </div>
-                            <DialogFooter>
-                              <DialogClose asChild>
-                                <Button
-                                  type="submit"
-                                  className="bg-update-green"
-                                >
-                                  Update Changes
-                                </Button>
-                              </DialogClose>
-                            </DialogFooter>
-                          </form>
-                        </DialogContent>
-                      </Dialog>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center">
-                    No data available
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          <DataTable columns={columns} data={items} />
         )}
       </div>
       <Footer />

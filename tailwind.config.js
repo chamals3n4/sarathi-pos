@@ -60,9 +60,8 @@ module.exports = {
         "sarathi-grey": "#373A40",
         "sarathi-purple": "#7F27FF",
         "regular-green": "#0A6847",
-        "sarathi-grey": "#3E4958",
-        "print-green":"#FD5D5D",
-        "invoice-green":"#8dfcb6"
+        "print-green": "#FD5D5D",
+        "invoice-green": "#8dfcb6",
       },
       borderRadius: {
         lg: "var(--radius)",
