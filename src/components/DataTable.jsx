@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ArrowUpDown } from "lucide-react";
 
 export function DataTable({ columns, data }) {
   const [sorting, setSorting] = React.useState([]);

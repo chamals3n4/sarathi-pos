@@ -129,7 +129,15 @@ export default function ViewSingleInvoice() {
       theme: "plain",
       headStyles: { fillColor: [255, 255, 255], textColor: 0, fontSize: 6 },
       bodyStyles: { fontSize: 7 },
-      styles: { cellPadding: 0.5, minCellHeight: 4, halign: "center" },
+      // styles: { cellPadding: 0.5, minCellHeight: 4, halign: "center" },
+      styles: {
+        cellPadding: 0.5,
+        minCellHeight: 4,
+        halign: "center",
+        valign: "middle",
+        lineWidth: 0.1,
+        lineColor: [0, 0, 0],
+      },
       margin: { left: 5, right: 5 }, // Center the table
       columnStyles: {
         0: { cellWidth: 7 }, // Quantity

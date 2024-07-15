@@ -240,6 +240,7 @@ export default function ViewAllInvoice() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="text-lg font-medium">No.</TableHead>
                 <TableHead className="text-lg font-medium">
                   Customer Name
                 </TableHead>
@@ -259,6 +260,7 @@ export default function ViewAllInvoice() {
                     onClick={() => handleRowClick(invoice.id)}
                     className="cursor-pointer hover:bg-gray-100"
                   >
+                    <TableCell className="text-lg">{invoice.id}</TableCell>
                     <TableCell className="text-lg">
                       {invoice.customers.name}
                     </TableCell>

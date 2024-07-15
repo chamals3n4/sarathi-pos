@@ -50,6 +50,8 @@ export default function CreateNewInvoice() {
 
   const [activeSection, setActiveSection] = useState("customer");
 
+  const [cashCustomerId, setCashCustomerId] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -68,6 +70,15 @@ export default function CreateNewInvoice() {
 
         setItems(itemsResponse.data || []);
         setCustomers(customersResponse.data || []);
+
+        const cashCustomer = customersResponse.data.find(
+          (customer) => customer.name === "cash"
+        );
+        if (cashCustomer) {
+          setCashCustomerId(cashCustomer.id);
+          setSelectedCustomerId(cashCustomer.id);
+          setSearchTerm("cash");
+        }
       } catch (error) {
         console.error("Error fetching data:", error.message);
       } finally {

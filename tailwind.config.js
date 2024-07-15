@@ -17,6 +17,9 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['"PT Sans"', "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -55,7 +58,7 @@ module.exports = {
         "sarathi-text": "#0F172A",
         "pos-grey": "#686D76",
         "choreo-blue": "#6A70D9",
-        "update-green": "#03C988",
+        "update-green": "#0FC058",
         "delete-red": "#FE523C",
         "sarathi-grey": "#373A40",
         "sarathi-purple": "#7F27FF",

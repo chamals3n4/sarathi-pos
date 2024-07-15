@@ -256,7 +256,10 @@ export default function Customers() {
               </div>
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button type="submit" className="bg-update-green">
+                  <Button
+                    type="submit"
+                    className="bg-update-green h-8 rounded-sm"
+                  >
                     Update Changes
                   </Button>
                 </DialogClose>
