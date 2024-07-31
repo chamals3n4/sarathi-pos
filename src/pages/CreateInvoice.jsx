@@ -271,7 +271,6 @@ export default function CreateNewInvoice() {
 
       toast.success("Invoice created successfully");
 
-      // Reset form
       setSelectedCustomerId(null);
       setSearchTerm("");
       setSelectedItems([]);
@@ -622,3 +621,5 @@ export default function CreateNewInvoice() {
     </>
   );
 }
+
+//forgot why i came here
