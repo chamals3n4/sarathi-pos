@@ -1,4 +1,4 @@
-## Point of Sale System for Sarthi Bookshop
+## Point of Sale System for Sarthi Bookshop [![Made with Supabase](https://supabase.com/badge-made-with-supabase.svg)](https://supabase.com)
 
 This Point of Sale (POS) system is designed specifically for Sarthi Bookshop to streamline sales processes and manage inventory efficiently.
 
