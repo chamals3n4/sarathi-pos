@@ -14,13 +14,13 @@ This Point of Sale (POS) system is designed specifically for Sarthi Bookshop to 
 
 ### Tech Stack
 
-| Technology            | Framework/Library         | Purpose                  |
-| --------------------- | ------------------------- | ------------------------ |
-| Frontend              | React + Vite              |                          |
-| BaaS                  | Supabase (Databae , Auth) | Database, Authentication |
-| Styling               | Tailwind CSS              | CSS Framework            |
-| UI Component          | shadcn/ui                 | Component Library        |
-| Production Deployment | Vercel                    | Hosting Platform         |
+| Technology            | Framework/Library         |
+| --------------------- | ------------------------- |
+| Frontend              | React + Vite              |
+| BaaS                  | Supabase (Databae , Auth) |
+| Styling               | Tailwind CSS              |
+| UI Component          | shadcn/ui                 |
+| Production Deployment | Vercel                    |
 
 ### Run Project Locally
 
