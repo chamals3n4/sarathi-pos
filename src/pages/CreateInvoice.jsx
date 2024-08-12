@@ -108,17 +108,27 @@ export default function CreateNewInvoice() {
   };
 
   const handleItemSelect = (item) => {
-    setSelectedItems([
-      ...selectedItems,
-      {
-        ...item,
-        qty: 1,
-        discountType: "value",
-        discountAmount: 0,
-      },
-    ]);
-    setItemSearchTerm("");
-    setIsItemDropdownOpen(false);
+    const itemExists = selectedItems.some(
+      (selectedItem) => selectedItem.id === item.id
+    );
+
+    if (itemExists) {
+      toast.error(`${item.name} is already in the list`);
+    } else {
+      const uniqueId = Date.now();
+      setSelectedItems([
+        ...selectedItems,
+        {
+          ...item,
+          uniqueId,
+          qty: 1,
+          discountType: "value",
+          discountAmount: 0,
+        },
+      ]);
+      setItemSearchTerm("");
+      setIsItemDropdownOpen(false);
+    }
   };
 
   const handleQuantityChange = (id, newQty) => {
@@ -147,9 +157,21 @@ export default function CreateNewInvoice() {
     );
   };
 
+  // const removeItem = (id) => {
+  //   console.log("before removing:", selectedItems);
+  //   setSelectedItems(selectedItems.filter((item) => item.id !== id));
+  //   console.log("after removing :", selectedItems);
+  // };
+
   const removeItem = (id) => {
-    setSelectedItems(selectedItems.filter((item) => item.id !== id));
+    setSelectedItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
+
+  // const removeItem = (id) => {
+  //   console.log("Before removing:", selectedItems);
+  //   setSelectedItems(selectedItems.filter((item) => item.id !== id));
+  //   console.log("After removing:", selectedItems);
+  // };
 
   const calculateItemDiscount = (item) => {
     if (item.discountType === "value") {
@@ -302,11 +324,7 @@ export default function CreateNewInvoice() {
   }, []);
 
   const handleGlobalKeyDown = (e) => {
-    if (e.key === "c" || e.key === "C") {
-      e.preventDefault();
-      setActiveSection("customer");
-      customerInputRef.current?.focus();
-    } else if (e.key === "i" || e.key === "I") {
+    if (e.key === "i" || e.key === "I") {
       e.preventDefault();
       setActiveSection("item");
       itemInputRef.current?.focus();
