@@ -4,6 +4,8 @@ This Point of Sale (POS) system is designed specifically for Sarthi Bookshop to 
 
 [![Made with Supabase](https://supabase.com/badge-made-with-supabase.svg)](https://supabase.com)
 
+![High Level Architecture Diagram](./src/assets/images/diagram.png)
+
 ### Key Features
 
 - **Create Invoice:** Generate new invoices for customer purchases.
